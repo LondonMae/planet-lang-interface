@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLanet — Experimental Design Composer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f7f7f6;
+  --surface: #ffffff;
+  --border: #e4e4e0;
+  --border-strong: #c8c8c4;
+  --text: #1a1a18;
+  --text-2: #6b6b67;
+  --accent: #5b5bd6;
+  --accent-bg: #f0f0ff;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --tag-within: #dbeafe;
+  --tag-within-text: #1d4ed8;
+  --tag-between: #fef9c3;
+  --tag-between-text: #854d0e;
+  --tag-cb: #dcfce7;
+  --tag-cb-text: #15803d;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  grid-template-rows: 52px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+header {
+  grid-column: 1 / -1;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+}
+
+.header-logo {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.3px;
+  color: var(--text);
+}
+.header-logo span { color: var(--accent); }
+
+.header-sep { flex: 1; }
+
+.header-subtitle {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+/* ── Left Panel ── */
+.left-panel {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.left-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+/* ── Right Panel ── */
+.right-panel {
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Section ── */
+.section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-child { border-bottom: none; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* ── Buttons ── */
+button {
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: background .12s, opacity .12s;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: var(--bg); color: var(--text); }
+
+.btn-add {
+  background: var(--accent-bg);
+  color: var(--accent);
+  padding: 4px 10px;
+  font-weight: 500;
+}
+.btn-add:hover { background: #e0e0ff; }
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius);
+}
+.btn-primary:hover { background: #4f4fd4; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-icon {
+  background: transparent;
+  color: var(--text-2);
+  padding: 2px 5px;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 3px;
+}
+.btn-icon:hover { background: var(--bg); color: var(--danger); }
+
+.btn-export {
+  background: var(--bg);
+  color: var(--text);
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+.btn-export:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── Variable cards ── */
+.variable-list { display: flex; flex-direction: column; gap: 8px; }
+
+.var-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+.var-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.var-name-input {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+}
+.var-name-input:focus { color: var(--accent); }
+.var-name-input::placeholder { color: var(--text-2); font-style: italic; }
+
+.var-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.option-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.option-tag .del { cursor: pointer; font-size: 10px; opacity: .55; }
+.option-tag .del:hover { opacity: 1; color: var(--danger); }
+
+.multivar-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  background: #7c3aed;
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  letter-spacing: .02em;
+}
+.var-card.multivar-card {
+  border-color: #ddd6fe;
+  background: #faf5ff;
+}
+
+.option-input {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 3px;
+  padding: 1px 6px;
+  outline: none;
+  width: 80px;
+  background: var(--surface);
+  color: var(--text);
+}
+.option-input:focus { border-color: var(--accent); }
+
+/* ── Design cards ── */
+.design-list { display: flex; flex-direction: column; gap: 10px; }
+
+.design-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.design-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.design-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--surface);
+  background: var(--accent);
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.design-name-input {
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  color: var(--text);
+  min-width: 0;
+}
+.design-name-input::placeholder { color: var(--text-2); font-style: italic; }
+
+.design-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+
+.design-var-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.design-var-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.annot-group {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.annot-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 7px;
+  background: var(--surface);
+  color: var(--text-2);
+  border-radius: 0;
+  border: none;
+}
+.annot-btn:hover:not(.active) { background: var(--bg); }
+.annot-btn.active.rand { background: #e5e5e5; color: #555; font-weight: 500; }
+.annot-btn.active.cb { background: var(--tag-cb); color: var(--tag-cb-text); font-weight: 500; }
+.annot-btn.active.order { background: var(--accent-bg); color: var(--accent); font-weight: 500; }
+.annot-btn.active.between { background: var(--tag-between); color: var(--tag-between-text); font-weight: 500; }
+.annot-sep { font-size: 10px; color: var(--border-strong); margin: 0 2px; user-select: none; align-self: center; }
+
+.order-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: var(--text-2);
+}
+
+.order-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--accent-bg);
+  border: 1px solid #c7c7ff;
+  border-radius: 3px;
+  padding: 2px 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+}
+
+.order-num {
+  font-size: 9px;
+  opacity: .6;
+  margin-right: 2px;
+}
+
+.order-arrow {
+  font-size: 9px;
+  cursor: pointer;
+  opacity: .6;
+  background: none;
+  border: none;
+  padding: 0 1px;
+  color: var(--accent);
+  line-height: 1;
+}
+.order-arrow:hover { opacity: 1; }
+
+.design-var-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  flex-shrink: 0;
+  padding-top: 1px;
+  min-width: 70px;
+}
+
+.design-var-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+  align-items: center;
+}
+
+.toggle-group {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.toggle-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--surface);
+  color: var(--text-2);
+  border-radius: 0;
+  border: none;
+}
+.toggle-btn.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+.toggle-btn:hover:not(.active) { background: var(--bg); }
+
+.tag {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+}
+.tag-within { background: var(--tag-within); color: var(--tag-within-text); }
+.tag-between { background: var(--tag-between); color: var(--tag-between-text); }
+.tag-cb { background: var(--tag-cb); color: var(--tag-cb-text); }
+.tag-cb.inactive { background: var(--bg); color: var(--text-2); border-color: var(--border); }
+
+.design-footer {
+  padding: 6px 12px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.design-add-var {
+  font-size: 11px;
+  color: var(--accent);
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 3px 10px;
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+}
+.design-add-var:hover { border-color: var(--accent); background: var(--accent-bg); }
+
+.design-meta-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.meta-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.meta-field input[type=number] {
+  width: 48px;
+  font-size: 11px;
+  padding: 2px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  outline: none;
+  background: var(--surface);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+}
+.meta-field input[type=number]:focus { border-color: var(--accent); }
+
+/* ── Composition ── */
+.comp-list { display: flex; flex-direction: column; gap: 8px; }
+
+.comp-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.comp-row-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comp-row-fields {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comp-row-fields .comp-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.comp-op {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--surface);
+  background: var(--accent);
+  border-radius: 3px;
+  padding: 2px 7px;
+}
+
+.comp-select {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 5px;
+  background: var(--surface);
+  outline: none;
+  color: var(--text);
+  min-width: 0;
+}
+.comp-select:focus { border-color: var(--accent); }
+
+.comp-arrow {
+  font-size: 12px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.comp-op-toggle { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+
+/* ── Target selection ── */
+.design-card.target-selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+.comp-row.target-selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
+.select-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color .12s, background .12s;
+  display: inline-block;
+}
+.select-dot.active {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+/* ── Run area ── */
+.run-bar {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--surface);
+}
+
+.units-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.units-input {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  width: 60px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+}
+.units-input:focus { border-color: var(--accent); }
+
+/* ── Results ── */
+.results-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.results-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg);
+}
+
+.results-title { font-size: 11px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: .08em; }
+.results-sep { flex: 1; }
+
+.results-body { padding: 16px; }
+
+.plans-table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-2);
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg); }
+
+.plan-id {
+  font-weight: 500;
+  color: var(--text-2);
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.condition-cell {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+
+td.cond-td {
+  padding: 5px 8px;
+}
+
+/* Alternating row stripes */
+tbody tr:nth-child(even) td { background: #fafaf9; }
+tbody tr:nth-child(even):hover td { background: var(--bg); }
+
+/* ── Code view ── */
+.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.code-editor {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  width: 100%;
+  min-height: 300px;
+  border: none;
+  outline: none;
+  resize: vertical;
+  padding: 16px;
+  white-space: pre;
+  tab-size: 4;
+  overflow-x: auto;
+  border-radius: var(--radius);
+}
+
+.code-kw { color: #cba6f7; }
+.code-fn { color: #89b4fa; }
+.code-str { color: #a6e3a1; }
+.code-var { color: #cdd6f4; }
+.code-op { color: #94e2d5; }
+
+/* ── Error ── */
+.error-box {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--danger);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ── Empty state ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: var(--text-2);
+  text-align: center;
+  gap: 8px;
+}
+.empty-state svg { opacity: .3; }
+.empty-state p { font-size: 13px; }
+.empty-state small { font-size: 11px; opacity: .7; }
+
+/* ── Spinner ── */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid #fff4;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Tabs ── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  font-size: 12px;
+  padding: 8px 14px;
+  color: var(--text-2);
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  border-radius: 0;
+}
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.tab:hover:not(.active) { color: var(--text); }
+
+.tab-panel { display: none; padding: 16px; }
+.tab-panel.active { display: block; }
+
+/* ── Var select popup ── */
+.popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.25);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.popup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 14px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.popup-title { font-size: 11px; font-weight: 600; color: var(--text-2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .06em; }
+.popup-item {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.popup-item:hover { background: var(--accent-bg); color: var(--accent); }
+.popup-cancel { margin-top: 4px; }
+
+/* ── Analysis ─────────────────────────────────────────────────────── */
+.analysis-grid { display: flex; flex-direction: column; gap: 12px; }
+
+.analysis-design-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.analysis-design-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.analysis-design-body {
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.analysis-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+
+.analysis-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 2px 7px;
+  border-radius: 3px;
+  margin: 2px 2px 2px 0;
+  font-weight: 500;
+}
+
+.analysis-tag-main { background: #f1f5f9; color: #475569; }
+.analysis-tag-interaction { background: #f1f5f9; color: #475569; }
+.analysis-tag-timevarying { background: #f1f5f9; color: #475569; }
+.analysis-tag-ws { background: #f1f5f9; color: #475569; }
+.analysis-empty { font-size: 10px; color: var(--text-2); font-style: italic; }
+.analysis-warn { font-size: 10px; color: #b45309; background: #fef9c3; border-radius: 3px; padding: 4px 8px; margin-top: 6px; grid-column: 1 / -1; }
+
+/* ── Compare ──────────────────────────────────────────────────────── */
+.compare-pickers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.compare-select {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 7px;
+  background: var(--surface);
+  outline: none;
+  color: var(--text);
+  flex: 1;
+  min-width: 120px;
+}
+.compare-select:focus { border-color: var(--accent); }
+.compare-vs { font-size: 10px; font-weight: 600; color: var(--text-2); flex-shrink: 0; }
+/* ── Comparison table ─────────────────────────────────────────────── */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.cmp-th { padding: 4px 8px; text-align: left; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); border-bottom: 1px solid var(--border); }
+.cmp-table tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+.cmp-type-cell { padding: 5px 8px; white-space: nowrap; }
+.cmp-var-cell { padding: 5px 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; width: 100%; }
+.cmp-check-cell { padding: 5px 16px; text-align: center; white-space: nowrap; }
+.cmp-check { font-size: 12px; font-weight: 700; }
+.cmp-in-d1 { color: #1e40af; }
+.cmp-in-d2 { color: #c2410c; }
+.cmp-in-both { color: #374151; }
+.cmp-out { color: #d1d5db; font-weight: 400; }
+
+/* ── Power viz ────────────────────────────────────────────────────── */
+.pwr-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.pwr-th { padding: 3px 8px; text-align: left; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); border-bottom: 1px solid var(--border); }
+.pwr-row:not(:last-child) td { border-bottom: 1px solid var(--border); }
+.pwr-var { padding: 5px 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+.pwr-cell { padding: 5px 8px; font-size: 10px; }
+.pwr-badge { display: inline-block; font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; }
+.pwr-ws { background: #dbeafe; color: #1d4ed8; }
+.pwr-main { background: #dcfce7; color: #15803d; }
+.pwr-none { background: #f3f4f6; color: #9ca3af; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- Header -->
+  <header>
+    <div class="header-logo">PL<span>a</span>net</div>
+    <div class="header-subtitle">Experimental Design Composer</div>
+    <div class="header-sep"></div>
+  </header>
+
+  <!-- Left panel: Builder -->
+  <div class="left-panel" id="leftPanel">
+    <div class="left-scroll">
+
+    <!-- Variables -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Variables</span>
+        <div style="display:flex;gap:4px">
+          <button class="btn-add" onclick="addVariable()">+ Variable</button>
+          <button class="btn-add" onclick="addMultivar()" style="background:#ede9fe;color:#6d28d9">+ Multivar</button>
+        </div>
+      </div>
+      <div class="variable-list" id="varList"></div>
+    </div>
+
+    <!-- Designs -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Designs</span>
+        <button class="btn-add" onclick="addDesign()">+ Design</button>
+      </div>
+      <div class="design-list" id="designList"></div>
+    </div>
+
+    <!-- Composition -->
+    <div class="section" id="compSection">
+      <div class="section-header">
+        <span class="section-title">Composition</span>
+        <button class="btn-add" onclick="addComposition()">+ Compose</button>
+      </div>
+      <div class="comp-list" id="compList"></div>
+    </div>
+
+    </div><!-- /left-scroll -->
+
+    <!-- Run -->
+    <div class="run-bar" style="flex-direction:column;gap:8px;align-items:stretch">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="units-field">
+          <span>Units</span>
+          <input type="number" class="units-input" id="unitsInput" value="12" min="1" max="9999">
+        </div>
+        <div style="flex:1"></div>
+        <button class="btn-primary" id="runBtn" onclick="runDesign()">Run ▶</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <select class="compare-select" id="cmpSel1" style="flex:1;min-width:0;font-size:11px"></select>
+        <span style="font-size:10px;color:var(--text-2);flex-shrink:0">vs</span>
+        <select class="compare-select" id="cmpSel2" style="flex:1;min-width:0;font-size:11px"></select>
+        <button class="btn-export" id="compareBtn" onclick="runCompare()" disabled style="border-color:#f59e0b;color:#d97706;opacity:0.5;flex-shrink:0">Compare</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel: Results -->
+  <div class="right-panel" id="rightPanel">
+    <div id="resultsArea">
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        <p>Build your design on the left, then click <strong>Run</strong></p>
+        <small>Plans and assignments will appear here</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Variable picker popup -->
+<div class="popup-overlay" id="varPickerOverlay" style="display:none" onclick="closeVarPicker()">
+  <div class="popup" onclick="event.stopPropagation()">
+    <div class="popup-title">Add variable to design</div>
+    <div id="varPickerList"></div>
+    <button class="btn-ghost popup-cancel" onclick="closeVarPicker()">Cancel</button>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────
+let state = {
+  variables: [],   // {id, name, options:[]}
+  designs: [],     // {id, label, name, dvars:[{vid, assignment, counterbalance, start_with}], limit_plans, num_trials}
+  compositions: [], // {id, type, outer, inner} or {id, type, a, b}
+  units: 12,
+};
+
+let _varPickerTarget = null; // design id for current picker
+let _selectedTarget = null;  // design or composition id selected for analyze/run
+let _nextId = 1;
+const uid = () => `x${_nextId++}`;
+const labels = 'ABCDEFGHIJ';
+
+function selectTarget(id) {
+  _selectedTarget = id;
+  render();
+}
+
+// ── Render ─────────────────────────────────────────────────────────
+function render() {
+  renderVars();
+  renderDesigns();
+  renderCompositions();
+  updateCompareBar();
+}
+
+function updateCompareBar() {
+  const sel1 = document.getElementById('cmpSel1');
+  const sel2 = document.getElementById('cmpSel2');
+  const btn = document.getElementById('compareBtn');
+  if (!sel1 || !sel2 || !btn) return;
+
+  const spec = buildSpec();
+  const tgts = buildAnalysisTargets(spec);
+
+  const prev1 = sel1.value, prev2 = sel2.value;
+  sel1.innerHTML = tgts.map(t => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
+  sel2.innerHTML = tgts.map(t => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
+
+  // Restore previous selections if still valid
+  if (tgts.find(t => t.id === prev1)) sel1.value = prev1;
+  if (tgts.find(t => t.id === prev2)) sel2.value = prev2;
+  // Default sel2 to second option so they differ
+  if (sel1.value === sel2.value && tgts.length >= 2) {
+    sel2.value = tgts.find(t => t.id !== sel1.value)?.id || tgts[0].id;
+  }
+
+  const ok = tgts.length >= 2;
+  btn.disabled = !ok;
+  btn.style.opacity = ok ? '1' : '0.5';
+}
+
+function runCompare() {
+  const t1 = document.getElementById('cmpSel1')?.value;
+  const t2 = document.getElementById('cmpSel2')?.value;
+  if (!t1 || !t2) return;
+  compareDesigns(t1, t2, buildSpec());
+}
+
+function renderVars() {
+  const el = document.getElementById('varList');
+  if (state.variables.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text-2);text-align:center;padding:8px 0">No variables yet</div>';
+    return;
+  }
+  const condMap = buildCondColorMap(state.variables);
+  const regularVars = state.variables.filter(v => v.type !== 'multivar');
+  el.innerHTML = state.variables.map(v => {
+    if (v.type === 'multivar') {
+      const compOpts = regularVars.filter(rv => !v.var_ids.includes(rv.id))
+        .map(rv => `<option value="${rv.id}">${esc(rv.name || '(unnamed)')}</option>`).join('');
+      return `
+        <div class="var-card multivar-card" id="vc_${v.id}">
+          <div class="var-card-header">
+            <span class="multivar-badge">MV</span>
+            <input class="var-name-input" placeholder="multivar name"
+              value="${esc(v.name)}"
+              onchange="updateVarName('${v.id}', this.value)"
+              oninput="updateVarName('${v.id}', this.value)">
+            <button class="btn-icon" onclick="removeVariable('${v.id}')" title="Remove">×</button>
+          </div>
+          <div class="var-options">
+            ${v.var_ids.map(vid => {
+              const rv = state.variables.find(x => x.id === vid);
+              return rv ? `<span class="option-tag" style="background:#ede9fe;border-color:#c4b5fd;color:#5b21b6">
+                <span>${esc(rv.name || '?')}</span>
+                <span class="del" onclick="removeMultivarComp('${v.id}','${vid}')">×</span>
+              </span>` : '';
+            }).join('')}
+            ${compOpts
+              ? `<select class="option-input" style="width:auto;padding:1px 4px;cursor:pointer"
+                  onchange="addMultivarComp('${v.id}',this)">
+                  <option value="">+ var…</option>${compOpts}
+                </select>`
+              : `<span style="font-size:10px;color:var(--text-2)">all vars added</span>`}
+          </div>
+        </div>`;
+    }
+    // Regular variable card
+    return `
+      <div class="var-card" id="vc_${v.id}">
+        <div class="var-card-header">
+          <input class="var-name-input" placeholder="variable name"
+            value="${esc(v.name)}"
+            onchange="updateVarName('${v.id}', this.value)"
+            oninput="updateVarName('${v.id}', this.value)">
+          <button class="btn-icon" onclick="removeVariable('${v.id}')" title="Remove">×</button>
+        </div>
+        <div class="var-options" id="opts_${v.id}">
+          ${v.options.map((o, i) => {
+            const col = condMap[o] || {bg:'#f3f4f6', text:'#374151'};
+            return `<span class="option-tag" style="background:${col.bg};border-color:${col.bg};color:${col.text}">
+              <span>${esc(o)}</span>
+              <span class="del" onclick="removeOption('${v.id}',${i})">×</span>
+            </span>`;
+          }).join('')}
+          <input class="option-input" placeholder="+ option"
+            onkeydown="addOptionKey(event,'${v.id}',this)"
+            onblur="addOptionBlur('${v.id}',this)">
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderDesigns() {
+  const el = document.getElementById('designList');
+  if (state.designs.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text-2);text-align:center;padding:8px 0">No designs yet</div>';
+    return;
+  }
+  el.innerHTML = state.designs.map((d, idx) => {
+    const label = labels[idx] || idx.toString();
+    const isSelected = _selectedTarget === d.id;
+    return `
+    <div class="design-card${isSelected ? ' target-selected' : ''}" id="dc_${d.id}">
+      <div class="design-card-header" style="cursor:pointer" onclick="selectTarget('${d.id}')">
+        <span class="select-dot${isSelected ? ' active' : ''}"></span>
+        <div class="design-label">${label}</div>
+        <input class="design-name-input" placeholder="Design ${label}"
+          value="${esc(d.name || '')}"
+          onchange="updateDesignName('${d.id}', this.value)"
+          oninput="updateDesignName('${d.id}', this.value)"
+          onclick="event.stopPropagation()">
+        <button class="btn-icon" onclick="event.stopPropagation();removeDesign('${d.id}')" title="Remove">×</button>
+      </div>
+      <div class="design-body">
+        ${d.dvars.map(dv => {
+          const v = state.variables.find(v => v.id === dv.vid);
+          if (!v) return '';
+          return `
+          <div class="design-var-row">
+            <div class="design-var-main">
+              <div class="design-var-name">${esc(v.name || '?')}</div>
+              <div class="annot-group">
+                <button class="annot-btn ${(dv.subject_type||'within')==='within'?'active rand':''}"
+                  onclick="setSubjectType('${d.id}','${dv.vid}','within')">WS</button>
+                <button class="annot-btn ${dv.subject_type==='between'?'active between':''}"
+                  onclick="setSubjectType('${d.id}','${dv.vid}','between')">BS</button>
+                <span class="annot-sep">│</span>
+                <button class="annot-btn ${dv.annotation==='randomized'?'active rand':''}"
+                  onclick="setAnnotation('${d.id}','${dv.vid}','randomized')">rand</button>
+                <button class="annot-btn ${dv.annotation==='counterbalance'?'active cb':''}"
+                  onclick="setAnnotation('${d.id}','${dv.vid}','counterbalance')">cb</button>
+                ${dv.subject_type !== 'between' ? `<button class="annot-btn ${dv.annotation==='order'?'active order':''}" onclick="setAnnotation('${d.id}','${dv.vid}','order')">order</button>` : ''}
+              </div>
+              <button class="btn-icon" onclick="removeDvar('${d.id}','${dv.vid}')" title="Remove">×</button>
+            </div>
+            ${dv.annotation === 'order' && (dv.order_sequence||[]).length > 0 ? `
+            <div class="order-row">
+              ${(dv.order_sequence||v.options).map((cond, i, arr) => `
+                <span class="order-item">
+                  <span class="order-num">${i+1}.</span>
+                  ${esc(cond)}
+                  ${i > 0 ? `<button class="order-arrow" onclick="moveOrderItem('${d.id}','${dv.vid}',${i},-1)" title="Move left">←</button>` : ''}
+                  ${i < arr.length-1 ? `<button class="order-arrow" onclick="moveOrderItem('${d.id}','${dv.vid}',${i},1)" title="Move right">→</button>` : ''}
+                </span>`).join('')}
+            </div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="design-footer">
+        <button class="design-add-var" onclick="openVarPicker('${d.id}')">+ add variable</button>
+        <div class="design-meta-row">
+          <div class="meta-field">
+            <span>limit_plans</span>
+            <input type="number" min="1" max="999" placeholder="—"
+              value="${d.limit_plans||''}"
+              onchange="updateDesignMeta('${d.id}','limit_plans',this.value||null)">
+          </div>
+          <div class="meta-field">
+            <span>num_trials</span>
+            <input type="number" min="1" max="999" placeholder="—"
+              value="${d.num_trials||''}"
+              onchange="updateDesignMeta('${d.id}','num_trials',this.value||null)">
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCompositions() {
+  const el = document.getElementById('compList');
+  const nodes = getNodeOptions();
+
+  if (state.compositions.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:var(--text-2);text-align:center;padding:4px 0">No compositions — single design will be used</div>';
+    return;
+  }
+
+  el.innerHTML = state.compositions.map((c, idx) => {
+    const label = `C${idx+1}`;
+    const isSelected = _selectedTarget === c.id;
+    const nodeOpts = (selected) => nodes.map(n =>
+      `<option value="${n.id}" ${n.id===selected?'selected':''}>${n.label}</option>`
+    ).join('');
+
+    const nestActive = c.type === 'nest';
+    const toggleHTML = `
+      <div class="comp-op-toggle">
+        <button class="annot-btn ${nestActive ? 'active rand' : ''}" onclick="event.stopPropagation();setCompType('${c.id}','nest')">nest</button>
+        <button class="annot-btn ${!nestActive ? 'active rand' : ''}" onclick="event.stopPropagation();setCompType('${c.id}','cross')">cross</button>
+      </div>`;
+
+    if (c.type === 'nest') {
+      return `
+      <div class="comp-row${isSelected ? ' target-selected' : ''}">
+        <div class="comp-row-header" style="cursor:pointer" onclick="selectTarget('${c.id}')">
+          <span class="select-dot${isSelected ? ' active' : ''}"></span>
+          <span style="font-size:10px;font-weight:600;color:var(--text-2);min-width:18px">${label}</span>
+          ${toggleHTML}
+          <div style="flex:1"></div>
+          <button class="btn-icon" onclick="event.stopPropagation();removeComp('${c.id}')">×</button>
+        </div>
+        <div class="comp-row-fields">
+          <span class="comp-arrow" style="font-size:10px">outer</span>
+          <select class="comp-select" onchange="updateComp('${c.id}','outer',this.value)">${nodeOpts(c.outer)}</select>
+          <span class="comp-arrow" style="font-size:10px">inner</span>
+          <select class="comp-select" onchange="updateComp('${c.id}','inner',this.value)">${nodeOpts(c.inner)}</select>
+        </div>
+      </div>`;
+    } else {
+      return `
+      <div class="comp-row${isSelected ? ' target-selected' : ''}">
+        <div class="comp-row-header" style="cursor:pointer" onclick="selectTarget('${c.id}')">
+          <span class="select-dot${isSelected ? ' active' : ''}"></span>
+          <span style="font-size:10px;font-weight:600;color:var(--text-2);min-width:18px">${label}</span>
+          ${toggleHTML}
+          <div style="flex:1"></div>
+          <button class="btn-icon" onclick="event.stopPropagation();removeComp('${c.id}')">×</button>
+        </div>
+        <div class="comp-row-fields">
+          <select class="comp-select" onchange="updateComp('${c.id}','a',this.value)">${nodeOpts(c.a)}</select>
+          <span class="comp-arrow">⨯</span>
+          <select class="comp-select" onchange="updateComp('${c.id}','b',this.value)">${nodeOpts(c.b)}</select>
+        </div>
+      </div>`;
+    }
+  }).join('');
+}
+
+// Node options = designs + compositions (for dropdowns)
+function getNodeOptions() {
+  const opts = [];
+  state.designs.forEach((d, i) => {
+    const label = labels[i] || i.toString();
+    opts.push({id: d.id, label: `Design ${label}${d.name ? ' · ' + d.name : ''}`});
+  });
+  state.compositions.forEach((c, i) => {
+    opts.push({id: c.id, label: `C${i+1} (${c.type})`});
+  });
+  return opts;
+}
+
+// ── Variable actions ───────────────────────────────────────────────
+function addVariable() {
+  state.variables.push({id: uid(), type: 'var', name: '', options: []});
+  render();
+  // Focus the new name input
+  const inputs = document.querySelectorAll('.var-name-input');
+  if (inputs.length) inputs[inputs.length-1].focus();
+}
+
+function removeVariable(vid) {
+  state.variables = state.variables.filter(v => v.id !== vid);
+  // Remove from designs
+  state.designs.forEach(d => { d.dvars = d.dvars.filter(dv => dv.vid !== vid); });
+  // Remove from multivar components
+  state.variables.forEach(v => {
+    if (v.type === 'multivar') v.var_ids = v.var_ids.filter(id => id !== vid);
+  });
+  render();
+}
+
+function updateVarName(vid, val) {
+  const v = state.variables.find(v => v.id === vid);
+  if (v) v.name = val.trim();
+  // Update design var names without full re-render
+  document.querySelectorAll('.design-var-name').forEach(el => {
+    // will refresh on next full render
+  });
+}
+
+function removeOption(vid, idx) {
+  const v = state.variables.find(v => v.id === vid);
+  if (v) { v.options.splice(idx, 1); render(); }
+}
+
+function addOptionKey(e, vid, input) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = input.value.trim().replace(/,/g,'');
+    if (val) addOption(vid, val, input);
+  }
+}
+
+function addOptionBlur(vid, input) {
+  const val = input.value.trim();
+  if (val) addOption(vid, val, input);
+}
+
+function addOption(vid, val, input) {
+  const v = state.variables.find(v => v.id === vid);
+  if (v && val && !v.options.includes(val)) {
+    v.options.push(val);
+    input.value = '';
+    render();
+  }
+}
+
+function addMultivar() {
+  state.variables.push({id: uid(), type: 'multivar', name: '', var_ids: []});
+  render();
+  const inputs = document.querySelectorAll('.var-name-input');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+function addMultivarComp(mvid, sel) {
+  const vid = sel.value;
+  if (!vid) return;
+  const mv = state.variables.find(v => v.id === mvid);
+  if (mv && !mv.var_ids.includes(vid)) { mv.var_ids.push(vid); render(); }
+  sel.value = '';
+}
+
+function removeMultivarComp(mvid, vid) {
+  const mv = state.variables.find(v => v.id === mvid);
+  if (mv) { mv.var_ids = mv.var_ids.filter(id => id !== vid); render(); }
+}
+
+// ── Design actions ─────────────────────────────────────────────────
+function addDesign() {
+  state.designs.push({id: uid(), name: '', dvars: [], limit_plans: null, num_trials: null});
+  render();
+}
+
+function removeDesign(did) {
+  if (_selectedTarget === did) _selectedTarget = null;
+  state.designs = state.designs.filter(d => d.id !== did);
+  state.compositions = state.compositions.filter(c =>
+    c.outer !== did && c.inner !== did && c.a !== did && c.b !== did
+  );
+  // Also clear selection if selected comp was removed
+  if (_selectedTarget && !state.compositions.find(c => c.id === _selectedTarget) && !state.designs.find(d => d.id === _selectedTarget)) {
+    _selectedTarget = null;
+  }
+  render();
+}
+
+function updateDesignName(did, val) {
+  const d = state.designs.find(d => d.id === did);
+  if (d) d.name = val.trim();
+}
+
+function updateDesignMeta(did, key, val) {
+  const d = state.designs.find(d => d.id === did);
+  if (d) d[key] = val ? parseInt(val) : null;
+}
+
+function setSubjectType(did, vid, subjectType) {
+  const d = state.designs.find(d => d.id === did);
+  if (!d) return;
+  const dv = d.dvars.find(dv => dv.vid === vid);
+  if (!dv) return;
+  dv.subject_type = subjectType;
+  if (subjectType === 'between' && dv.annotation === 'order') {
+    dv.annotation = 'randomized';
+  }
+  render();
+}
+
+function setAnnotation(did, vid, annotation) {
+  const d = state.designs.find(d => d.id === did);
+  if (!d) return;
+  const dv = d.dvars.find(dv => dv.vid === vid);
+  if (!dv) return;
+  dv.annotation = annotation;
+  if (annotation === 'order') {
+    const v = state.variables.find(v => v.id === vid);
+    const opts = v?.options || [];
+    if (!dv.order_sequence || dv.order_sequence.length !== opts.length) {
+      dv.order_sequence = [...opts];
+    }
+  }
+  render();
+}
+
+function moveOrderItem(did, vid, idx, dir) {
+  const d = state.designs.find(d => d.id === did);
+  if (!d) return;
+  const dv = d.dvars.find(dv => dv.vid === vid);
+  if (!dv) return;
+  const seq = dv.order_sequence;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= seq.length) return;
+  [seq[idx], seq[newIdx]] = [seq[newIdx], seq[idx]];
+  render();
+}
+
+function removeDvar(did, vid) {
+  const d = state.designs.find(d => d.id === did);
+  if (d) { d.dvars = d.dvars.filter(dv => dv.vid !== vid); render(); }
+}
+
+// ── Variable picker ────────────────────────────────────────────────
+function openVarPicker(did) {
+  _varPickerTarget = did;
+  const d = state.designs.find(d => d.id === did);
+  const usedVids = new Set((d?.dvars||[]).map(dv => dv.vid));
+  const available = state.variables.filter(v => !usedVids.has(v.id));
+
+  const list = document.getElementById('varPickerList');
+  if (available.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-2);padding:6px 0">No variables available — add more above</div>';
+  } else {
+    list.innerHTML = available.map(v => {
+      const subtitle = v.type === 'multivar'
+        ? 'multifact(' + v.var_ids.map(id => {
+            const rv = state.variables.find(x => x.id === id);
+            return esc(rv ? rv.name || '?' : '?');
+          }).join(', ') + ')'
+        : (v.options || []).join(', ');
+      return `<div class="popup-item" onclick="pickVar('${v.id}')">
+        <span>${esc(v.name || '(unnamed)')}</span>
+        <span style="font-size:10px;color:var(--text-2)">${subtitle}</span>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('varPickerOverlay').style.display = 'flex';
+}
+
+function closeVarPicker() {
+  document.getElementById('varPickerOverlay').style.display = 'none';
+  _varPickerTarget = null;
+}
+
+function pickVar(vid) {
+  const d = state.designs.find(d => d.id === _varPickerTarget);
+  if (d && !d.dvars.find(dv => dv.vid === vid)) {
+    const v = state.variables.find(v => v.id === vid);
+    d.dvars.push({vid, subject_type: 'within', annotation: 'randomized', order_sequence: [...(v?.options || [])]});
+  }
+  closeVarPicker();
+  render();
+}
+
+// ── Composition actions ────────────────────────────────────────────
+function addComposition() {
+  const nodes = getNodeOptions();
+  if (nodes.length < 2) {
+    alert('Add at least 2 designs first');
+    return;
+  }
+  const outer = nodes[0].id;
+  const inner = nodes.length > 1 ? nodes[1].id : nodes[0].id;
+  state.compositions.push({id: uid(), type: 'nest', outer, inner});
+  render();
+}
+
+function removeComp(cid) {
+  if (_selectedTarget === cid) _selectedTarget = null;
+  state.compositions = state.compositions.filter(c => c.id !== cid);
+  render();
+}
+
+function setCompType(cid, type) {
+  const c = state.compositions.find(c => c.id === cid);
+  if (!c) return;
+  if (type === 'cross') {
+    c.type = 'cross';
+    c.a = c.outer; c.b = c.inner;
+    delete c.outer; delete c.inner;
+  } else {
+    c.type = 'nest';
+    c.outer = c.a; c.inner = c.b;
+    delete c.a; delete c.b;
+  }
+  render();
+}
+
+function updateComp(cid, key, val) {
+  const c = state.compositions.find(c => c.id === cid);
+  if (c) c[key] = val;
+}
+
+// ── Build spec ─────────────────────────────────────────────────────
+function buildSpec() {
+  const units = parseInt(document.getElementById('unitsInput').value) || 12;
+
+  const root = _selectedTarget
+    || (state.compositions.length ? state.compositions[state.compositions.length - 1].id
+    : (state.designs.length ? state.designs[state.designs.length - 1].id : null));
+
+  return {
+    variables: state.variables.map(v => v.type === 'multivar'
+      ? {id: v.id, type: 'multivar', name: v.name, var_ids: v.var_ids}
+      : {id: v.id, type: 'var', name: v.name, options: v.options}
+    ),
+    designs: state.designs.map(d => ({
+      id: d.id,
+      label: labels[state.designs.indexOf(d)] || d.id,
+      name: d.name || '',
+      variables: d.dvars.map(dv => ({
+        variable_id: dv.vid,
+        subject_type: dv.subject_type || 'within',
+        annotation: dv.annotation,
+        order_sequence: dv.annotation === 'order' ? (dv.order_sequence || []) : null,
+      })),
+      limit_plans: d.limit_plans || null,
+      num_trials: d.num_trials || null,
+    })),
+    compositions: state.compositions,
+    root,
+    units,
+  };
+}
+
+// ── Run ────────────────────────────────────────────────────────────
+async function runDesign() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  const spec = buildSpec();
+
+  try {
+    const res = await fetch('/api/run', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(spec),
+    });
+    const data = await res.json();
+    renderResults(data, spec);
+    if (data.success) {
+      analyzeDesigns(_selectedTarget || null);
+    }
+  } catch(e) {
+    renderResults({success: false, error: e.message}, spec);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Run ▶';
+  }
+}
+
+// ── Condition color palette (colorblind-friendly, Okabe-Ito inspired) ──
+const CB_PALETTE = [
+  {bg:'#dbeafe', text:'#1e40af'}, // blue
+  {bg:'#ffedd5', text:'#c2410c'}, // orange
+  {bg:'#dcfce7', text:'#15803d'}, // green
+  {bg:'#fef9c3', text:'#854d0e'}, // yellow
+  {bg:'#e0f2fe', text:'#0369a1'}, // sky
+  {bg:'#fee2e2', text:'#b91c1c'}, // red
+  {bg:'#ede9fe', text:'#6d28d9'}, // violet
+  {bg:'#fce7f3', text:'#be185d'}, // pink
+  {bg:'#d1fae5', text:'#065f46'}, // emerald
+  {bg:'#fef3c7', text:'#92400e'}, // amber
+];
+
+// Build a stable map: condition string → color, ordered by variable/option definition
+function buildCondColorMap(vars) {
+  const map = {};
+  let idx = 0;
+  (vars || []).forEach(v => {
+    if (v.type === 'multivar') return;
+    (v.options || []).forEach(o => {
+      if (!(o in map)) { map[o] = CB_PALETTE[idx % CB_PALETTE.length]; idx++; }
+    });
+  });
+  return map;
+}
+
+// ── Render results ─────────────────────────────────────────────────
+function renderResults(data, spec) {
+  const area = document.getElementById('resultsArea');
+  const savedAnalysisCard = document.getElementById('analysisCard');
+
+  if (!data.success) {
+    area.innerHTML = `
+      <div class="results-card">
+        <div class="results-header">
+          <span class="results-title">Error</span>
+        </div>
+        <div class="results-body">
+          <div class="error-box">${esc(data.error || 'Unknown error')}</div>
+        </div>
+      </div>`;
+    if (savedAnalysisCard) area.insertBefore(savedAnalysisCard, area.firstChild);
+    return;
+  }
+
+  const plans = data.plans;
+  const variables = data.variables;
+  const numTrials = plans[0]?.trials.length || 0;
+  const condColorMap = buildCondColorMap(spec.variables);
+
+  // Plans table — color per unique condition value
+  const plansHTML = `
+    <div class="plans-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            ${Array.from({length: numTrials}, (_, i) => `<th>T${i+1}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${plans.map(p => `
+            <tr>
+              ${p.trials.map(t => {
+                const parts = t.split('-');
+                const cellContent = parts.map(part => {
+                  const col = condColorMap[part] || {bg:'#f3f4f6', text:'#374151'};
+                  return `<span class="condition-cell" style="background:${col.bg};color:${col.text}">${esc(part)}</span>`;
+                }).join('<span style="color:var(--text-2);font-size:9px;padding:0 1px">-</span>');
+                return `<td class="cond-td">${cellContent}</td>`;
+              }).join('')}
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+
+  // Assignment table
+  const assignRows = data.assignment || [];
+  const assignHTML = assignRows.length ? `
+    <div class="plans-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            ${Object.keys(assignRows[0]).map(k => `<th>${esc(k)}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${assignRows.map(row => `
+            <tr>${Object.values(row).map(v => `<td>${v}</td>`).join('')}</tr>`).join('')}
+        </tbody>
+      </table>
+    </div>` : '<div style="font-size:12px;color:var(--text-2)">No assignment data</div>';
+
+  // Code
+  const codeHTML = `<pre class="code-block">${syntaxHighlight(esc(data.code))}</pre>`;
+
+  area.innerHTML = `
+    <div class="results-card">
+      <div class="results-header">
+        <span class="results-title">Results</span>
+        <span style="font-size:11px;color:var(--text-2)">${plans.length} plan${plans.length!==1?'s':''} · ${numTrials} trial${numTrials!==1?'s':''} each</span>
+        <div class="results-sep"></div>
+        <button class="btn-export" onclick="exportCSV()">↓ CSV</button>
+        <button class="btn-export" onclick="exportLatex()">↓ LaTeX</button>
+      </div>
+      <div class="tab-bar">
+        <button class="tab active" onclick="switchTab(event,'plans')">Plans</button>
+        <button class="tab" onclick="switchTab(event,'assignment')">Assignment</button>
+        <button class="tab" onclick="switchTab(event,'code')">Code</button>
+      </div>
+      <div class="tab-panel active" id="tab-plans">${plansHTML}</div>
+      <div class="tab-panel" id="tab-assignment">${assignHTML}</div>
+      <div class="tab-panel" id="tab-code">${codeHTML}</div>
+    </div>`;
+
+  if (savedAnalysisCard) area.insertBefore(savedAnalysisCard, area.firstChild);
+
+  // Store spec for export
+  window._lastSpec = spec;
+}
+
+function switchTab(e, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── Exports ────────────────────────────────────────────────────────
+async function exportCSV() {
+  const spec = window._lastSpec;
+  if (!spec) return;
+  const res = await fetch('/api/export/csv', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(spec),
+  });
+  const text = await res.text();
+  download(text, 'assignment.csv', 'text/csv');
+}
+
+async function exportLatex() {
+  const spec = window._lastSpec;
+  if (!spec) return;
+  const res = await fetch('/api/export/latex', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(spec),
+  });
+  const text = await res.text();
+  download(text, 'design.tex', 'text/plain');
+}
+
+function download(content, filename, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = filename;
+  a.click();
+}
+
+
+// ── Analyze ────────────────────────────────────────────────────────
+function buildAnalysisTargets(spec) {
+  const labels = 'ABCDEFGHIJ';
+  const targets = [];
+  (spec.compositions || []).forEach((c, i) => {
+    targets.push({ id: c.id, label: `C${i+1} (${c.type})` });
+  });
+  spec.designs.forEach((d, idx) => {
+    const letter = labels[idx] || String(idx + 1);
+    const name = d.name ? ` · ${d.name}` : '';
+    targets.push({ id: d.id, label: `Design ${letter}${name}` });
+  });
+  return targets;
+}
+
+async function analyzeDesigns(targetId) {
+  const spec = buildSpec();
+  const targets = buildAnalysisTargets(spec);
+  if (!targetId) targetId = _selectedTarget || targets[0]?.id;
+
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ ...spec, analyze_target: targetId }),
+    });
+    const data = await res.json();
+    renderAnalysis(data, spec, targets, targetId);
+  } catch(e) {
+    renderAnalysis({success: false, error: e.message}, spec, targets, targetId);
+  }
+}
+
+// Re-run the design for a specific target node and update results
+async function runForTarget(targetId, spec) {
+  const specWithRoot = { ...spec, root: targetId };
+  try {
+    const res = await fetch('/api/run', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(specWithRoot),
+    });
+    const data = await res.json();
+    renderResults(data, specWithRoot);
+  } catch(e) { /* silently ignore — results card will keep old data */ }
+}
+
+function renderAnalysis(data, spec, targets, activeTargetId) {
+  const existing = document.getElementById('analysisCard');
+  if (existing) existing.remove();
+
+  const area = document.getElementById('resultsArea');
+  const card = document.createElement('div');
+  card.id = 'analysisCard';
+  card.className = 'results-card';
+
+  const activeLabel = targets.find(t => t.id === activeTargetId)?.label || activeTargetId || '';
+
+  // ── Single-design panel ──────────────────────────────────────────
+  let singleBodyHTML = '';
+  if (!data.success) {
+    singleBodyHTML = `<div class="results-body"><div class="error-box">${esc(data.error || 'Unknown error')}</div></div>`;
+  } else {
+    const a = data.analysis;
+    const tags = (items, cls) => items.length
+      ? items.map(v => `<span class="analysis-tag ${cls}">${esc(v)}</span>`).join('')
+      : `<span class="analysis-empty">none</span>`;
+    const warningsHTML = '';
+    singleBodyHTML = `
+      <div class="results-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+          <div>
+            <div class="analysis-section-title">Main Effects</div>
+            ${tags(a.main_effects, 'analysis-tag-main')}
+          </div>
+          <div>
+            <div class="analysis-section-title">Interaction Effects</div>
+            ${tags(a.interaction_effects, 'analysis-tag-interaction')}
+          </div>
+          <div>
+            <div class="analysis-section-title">Time-Varying Effects</div>
+            ${tags(a.time_varying_effects, 'analysis-tag-timevarying')}
+          </div>
+          <div>
+            <div class="analysis-section-title">Within-Subjects Comparisons</div>
+            ${tags(a.ws_comparisons, 'analysis-tag-ws')}
+          </div>
+          ${warningsHTML}
+        </div>
+      </div>`;
+  }
+
+  // ── Build card HTML ───────────────────────────────────────────────
+  card.innerHTML = `
+    <div class="results-header">
+      <span class="results-title">Analysis</span>
+      ${activeLabel ? `<span style="font-size:11px;color:var(--text-2)">${esc(activeLabel)}</span>` : ''}
+    </div>
+    <div id="analysisSinglePanel">${singleBodyHTML}</div>`;
+
+  const resultsCard = area.querySelector('.results-card');
+  if (resultsCard) {
+    area.insertBefore(card, resultsCard);
+  } else {
+    area.appendChild(card);
+  }
+}
+
+async function compareDesigns(t1, t2, spec) {
+  const btn = document.getElementById('compareBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  // Replace entire results area with the compare card
+  const area = document.getElementById('resultsArea');
+  area.innerHTML = '';
+  const card = document.createElement('div');
+  card.id = 'compareCard';
+  card.className = 'results-card';
+  area.appendChild(card);
+  card.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-2);font-size:12px">Comparing…</div>`;
+  area.scrollTop = 0;
+
+  const tgts = buildAnalysisTargets(spec);
+  const labelOf = (id) => tgts.find(t => t.id === id)?.label || id;
+  const d1Label = labelOf(t1);
+  const d2Label = labelOf(t2);
+
+  try {
+    const [compareRes, run1Res, run2Res] = await Promise.all([
+      fetch('/api/compare', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...spec, compare_target_1:t1, compare_target_2:t2}) }),
+      fetch('/api/run', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...spec, root:t1}) }),
+      fetch('/api/run', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...spec, root:t2}) }),
+    ]);
+    const [data, run1Data, run2Data] = await Promise.all([
+      compareRes.json(), run1Res.json(), run2Res.json()
+    ]);
+    console.log('compareDesigns data:', data);
+    renderCompareCard(card, data, run1Data, run2Data, d1Label, d2Label, buildCondColorMap(spec.variables));
+  } catch(e) {
+    console.error('compareDesigns error:', e, e?.stack);
+    const msg = e?.message || String(e) || 'Unknown error';
+    card.innerHTML = `
+      <div class="results-header"><span class="results-title">Comparison</span></div>
+      <div class="results-body"><div class="error-box">${esc(msg)}</div></div>`;
+  } finally {
+    if (btn) {
+      const ok = (document.getElementById('cmpSel1')?.value && document.getElementById('cmpSel2')?.value);
+      btn.disabled = !ok;
+      btn.textContent = 'Compare';
+      btn.style.opacity = ok ? '1' : '0.5';
+    }
+  }
+}
+
+function renderCompareCard(card, data, run1Data, run2Data, d1Label, d2Label, condColorMap) {
+  const errorHTML = !data.success
+    ? `<div class="error-box" style="margin:12px 16px">${esc(data.error || 'Analysis error')}</div>`
+    : '';
+
+  // ── Plans tables ──────────────────────────────────────────────────
+  const plansHTML = `
+    <div class="results-body" style="border-top:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:10px">Plans</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+        ${miniPlansTable(run1Data, d1Label, condColorMap)}
+        ${miniPlansTable(run2Data, d2Label, condColorMap)}
+      </div>
+    </div>`;
+
+  // ── Analysis comparison ───────────────────────────────────────────
+  let analysisHTML = '';
+  if (data.success) {
+    const a1 = data.analysis_d1;
+    const a2 = data.analysis_d2;
+    if (a1 && a2) {
+      const sections = [
+        { label:'Main Effect',  key:'main_effects' },
+        { label:'Interaction',  key:'interaction_effects' },
+        { label:'Time-Varying', key:'time_varying_effects' },
+      ];
+      let rows = '';
+      for (const { label, key } of sections) {
+        const s1 = new Set(a1[key]), s2 = new Set(a2[key]);
+        const all = [...new Set([...a1[key], ...a2[key]])].sort();
+        for (const item of all) {
+          const in1 = s1.has(item), in2 = s2.has(item);
+          const both = in1 && in2;
+          const rowBg = in1 && !in2 ? 'background:#eff6ff' : !in1 && in2 ? 'background:#fff7ed' : '';
+          const c1 = in1 ? `<span class="cmp-check ${both?'cmp-in-both':'cmp-in-d1'}">✓</span>` : `<span class="cmp-check cmp-out">—</span>`;
+          const c2 = in2 ? `<span class="cmp-check ${both?'cmp-in-both':'cmp-in-d2'}">✓</span>` : `<span class="cmp-check cmp-out">—</span>`;
+          rows += `<tr style="${rowBg}">
+            <td class="cmp-type-cell"><span style="font-size:9px;color:var(--text-2);font-family:'JetBrains Mono',monospace">${label}</span></td>
+            <td class="cmp-var-cell">${esc(item)}</td>
+            <td class="cmp-check-cell">${c1}</td>
+            <td class="cmp-check-cell">${c2}</td>
+          </tr>`;
+        }
+      }
+      const tableHTML = rows ? `
+        <table class="cmp-table">
+          <thead><tr>
+            <th class="cmp-th">Type</th>
+            <th class="cmp-th">Effect</th>
+            <th class="cmp-th" style="text-align:center;color:#1e40af">${esc(d1Label)}</th>
+            <th class="cmp-th" style="text-align:center;color:#c2410c">${esc(d2Label)}</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>` : `<div class="analysis-empty">No estimable effects in either design.</div>`;
+
+      analysisHTML = `
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:14px">
+          ${tableHTML}
+          ${powerVizHTML(a1, a2, d1Label, d2Label)}
+        </div>`;
+    }
+  }
+
+  card.innerHTML = `
+    <div class="results-header">
+      <span class="results-title">Comparison</span>
+      <span style="font-size:11px;color:var(--text-2)">${esc(d1Label)} vs ${esc(d2Label)}</span>
+    </div>
+    ${errorHTML}
+    ${analysisHTML}
+    ${plansHTML}`;
+}
+
+function miniPlansTable(runData, label, condColorMap) {
+  if (!runData || !runData.success || !runData.plans?.length) {
+    return `<div style="font-size:11px;color:var(--text-2);padding:4px 0">${esc(label)}: no plans</div>`;
+  }
+  const plans = runData.plans;
+  const numTrials = plans[0]?.trials.length || 0;
+  return `
+    <div>
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:6px">${esc(label)}</div>
+      <div class="plans-table-wrap" style="max-height:180px;overflow-y:auto">
+        <table>
+          <thead><tr>${Array.from({length: numTrials}, (_, i) => `<th>T${i+1}</th>`).join('')}</tr></thead>
+          <tbody>${plans.map(p => `<tr>${p.trials.map(t => {
+            const parts = t.split('-');
+            const cellContent = parts.map(part => {
+              const col = condColorMap[part] || {bg:'#f3f4f6', text:'#374151'};
+              return `<span class="condition-cell" style="background:${col.bg};color:${col.text}">${esc(part)}</span>`;
+            }).join('<span style="color:var(--text-2);font-size:9px;padding:0 1px">-</span>');
+            return `<td class="cond-td">${cellContent}</td>`;
+          }).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>
+      <div style="font-size:10px;color:var(--text-2);margin-top:4px">${plans.length} plan${plans.length!==1?'s':''} · ${numTrials} trial${numTrials!==1?'s':''} each</div>
+    </div>`;
+}
+
+function powerVizHTML(a1, a2, d1Label, d2Label) {
+  if (!a1 || !a2) return '';
+
+  // Power level: WS comparison (2) > estimable (1) > not estimable (0)
+  const level = (v, a) =>
+    a.ws_comparisons.includes(v) ? 2 :
+    (a.main_effects.includes(v) || a.interaction_effects.includes(v)) ? 1 : 0;
+
+  const edgeHTML = (l1, l2) => {
+    if (l1 > l2) return `<span style="color:#1e40af;font-weight:600">↑ ${esc(d1Label)}</span>`;
+    if (l2 > l1) return `<span style="color:#c2410c;font-weight:600">↑ ${esc(d2Label)}</span>`;
+    return `<span style="color:var(--text-2)">equal</span>`;
+  };
+
+  const allEffects = [...new Set([
+    ...a1.main_effects, ...a2.main_effects,
+    ...a1.interaction_effects, ...a2.interaction_effects,
+  ])].sort();
+
+  if (!allEffects.length) return '';
+
+  const rows = allEffects.map(v => {
+    const l1 = level(v, a1), l2 = level(v, a2);
+    return `<tr class="pwr-row"><td class="pwr-var">${esc(v)}</td><td class="pwr-cell">${edgeHTML(l1, l2)}</td></tr>`;
+  }).join('');
+
+  return `
+    <div>
+      <div class="analysis-section-title" style="margin-bottom:6px">Power Advantage</div>
+      <table class="pwr-table">
+        <thead><tr><th class="pwr-th">Effect</th><th class="pwr-th">Edge</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+// ── Syntax highlight ───────────────────────────────────────────────
+function syntaxHighlight(code) {
+  return code
+    .replace(/\b(from|import|if|else|for|in|return|True|False|None)\b/g, '<span class="code-kw">$1</span>')
+    .replace(/\b(ExperimentVariable|Design|Units|assign|nest|cross|multifact)\b/g, '<span class="code-fn">$1</span>')
+    .replace(/\.(within_subjects|between_subjects|counterbalance|order|limit_plans|num_trials|start_with)\b/g, '.<span class="code-op">$1</span>')
+    .replace(/(&quot;[^&]*&quot;)/g, '<span class="code-str">$1</span>');
+}
+
+// ── Utility ────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init with example ──────────────────────────────────────────────
+function loadExample() {
+  const v1 = uid(), v2 = uid();
+  const d1 = uid(), d2 = uid();
+  state.variables = [
+    {id: v1, type: 'var', name: 'interface', options: ['baseline', 'VR']},
+    {id: v2, type: 'var', name: 'task', options: ['creation', 'editing']},
+  ];
+  state.designs = [
+    {id: d1, name: '', dvars: [{vid: v1, annotation: 'counterbalance', order_sequence: ['baseline', 'VR']}], limit_plans: null, num_trials: null},
+    {id: d2, name: '', dvars: [{vid: v2, annotation: 'randomized', order_sequence: ['creation', 'editing']}], limit_plans: null, num_trials: null},
+  ];
+  state.compositions = [];
+  _selectedTarget = null;
+  render();
+}
+
+loadExample();
+</script>
+</body>
+</html>
