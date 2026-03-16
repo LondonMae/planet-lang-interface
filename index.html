@@ -160,6 +160,10 @@ button {
 }
 .btn-primary:hover { background: #4f4fd4; }
 .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-cancel { background: #dc2626 !important; }
+.btn-cancel:hover { background: #b91c1c !important; }
+.lp-pill { font-size: 9px; padding: 2px 6px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2,#f3f4f6); color: var(--text-2); cursor: pointer; line-height: 1.6; }
+.lp-pill:hover { background: var(--border); color: var(--text); }
 
 .btn-icon {
   background: transparent;
@@ -858,7 +862,7 @@ tbody tr:nth-child(even):hover td { background: var(--bg); }
 .analysis-tag-timevarying { background: #f1f5f9; color: #475569; }
 .analysis-tag-ws { background: #f1f5f9; color: #475569; }
 .analysis-empty { font-size: 10px; color: var(--text-2); font-style: italic; }
-.analysis-warn { font-size: 10px; color: #b45309; background: #fef9c3; border-radius: 3px; padding: 4px 8px; margin-top: 6px; grid-column: 1 / -1; }
+.analysis-warning-banner { font-size: 10px; color: #b45309; background: #fef9c3; border-radius: 3px; padding: 4px 8px; margin-bottom: 8px; word-wrap: break-word; overflow-wrap: break-word; }
 
 /* ── Compare ──────────────────────────────────────────────────────── */
 .compare-pickers {
@@ -886,6 +890,7 @@ tbody tr:nth-child(even):hover td { background: var(--bg); }
 .compare-vs { font-size: 10px; font-weight: 600; color: var(--text-2); flex-shrink: 0; }
 /* ── Comparison table ─────────────────────────────────────────────── */
 .cmp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.cmp-table tbody tr td { background: #fff; }
 .cmp-th { padding: 4px 8px; text-align: left; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); border-bottom: 1px solid var(--border); }
 .cmp-table tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
 .cmp-type-cell { padding: 5px 8px; white-space: nowrap; }
@@ -896,10 +901,39 @@ tbody tr:nth-child(even):hover td { background: var(--bg); }
 .cmp-in-d2 { color: #c2410c; }
 .cmp-in-both { color: #374151; }
 .cmp-out { color: #d1d5db; font-weight: 400; }
+.cmp-section-header td { padding: 6px 8px 3px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-2); background: #fff; border-top: 1px solid var(--border); }
+.cmp-warn { display: inline-block; color: #d97706; font-size: 16px; cursor: default; margin-left: 3px; vertical-align: middle; }
+.analysis-warn { display: inline-block; color: #d97706; font-size: 15px; cursor: default; margin-left: 2px; vertical-align: middle; }
+.cmp-table tbody tr.cmp-warn-row td { background: #fffbeb; }
+#floatTip { position: fixed; background: #1f2937; color: #f9fafb; font-size: 10px; font-weight: 400; padding: 4px 8px; border-radius: 4px; white-space: normal; max-width: 220px; text-align: left; pointer-events: none; z-index: 9999; display: none; }
+
+/* ── Definition tooltip ───────────────────────────────────────────── */
+#defTip { position: fixed; background: #1e293b; color: #f1f5f9; border-radius: 10px; padding: 14px 16px; max-width: 280px; box-shadow: 0 8px 32px rgba(0,0,0,0.32); z-index: 9998; display: none; font-size: 11px; line-height: 1.55; pointer-events: none; }
+#defTip .def-title { font-weight: 700; font-size: 12px; color: #fff; margin-bottom: 6px; }
+#defTip .def-ex { font-style: italic; color: #94a3b8; font-size: 10px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 6px; margin-top: 6px; }
+[data-def] { cursor: default; text-decoration: underline dotted currentColor; text-underline-offset: 3px; }
+
+/* ── Tutorial ─────────────────────────────────────────────────────── */
+#tutHighlight { position: fixed; border: 2px solid var(--accent); border-radius: 6px; box-shadow: 0 0 0 3000px rgba(0,0,0,0.18); pointer-events: none; z-index: 8998; display: none; transition: top .2s, left .2s, width .2s, height .2s; }
+#tutTip { position: fixed; background: #1e293b; color: #f1f5f9; border-radius: 10px; padding: 16px 18px; max-width: 310px; width: max-content; box-shadow: 0 8px 32px rgba(0,0,0,0.28); z-index: 8999; display: none; font-size: 12px; line-height: 1.55; overflow-wrap: break-word; word-break: break-word; }
+#tutTip code { font-family: 'JetBrains Mono', monospace; font-size: 10px; background: rgba(255,255,255,0.1); border-radius: 3px; padding: 1px 4px; display: inline-block; overflow-wrap: break-word; word-break: break-all; }
+#tutTip .tut-title { font-weight: 700; font-size: 13px; margin-bottom: 8px; color: #fff; }
+#tutTip .tut-nav { display: flex; align-items: center; gap: 6px; margin-top: 14px; }
+#tutTip .tut-prog { font-size: 10px; color: #94a3b8; flex: 1; text-align: center; }
+#tutTip .tut-btn { font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 5px; cursor: pointer; border: none; }
+#tutTip .tut-next { background: var(--accent); color: #fff; }
+#tutTip .tut-next:hover:not(:disabled) { background: #4f4fd4; }
+#tutTip .tut-next:disabled { opacity: 0.4; cursor: default; }
+#tutTip .tut-skip { background: transparent; color: #94a3b8; padding: 4px 6px; }
+#tutTip .tut-skip:hover { color: #f1f5f9; }
+#tutTip .tut-prev { background: transparent; color: #94a3b8; border: 1px solid #475569; }
+#tutTip .tut-prev:hover { color: #f1f5f9; border-color: #94a3b8; }
+#tutTip .tut-prev:disabled { opacity: 0.3; cursor: default; }
 
 /* ── Power viz ────────────────────────────────────────────────────── */
 .pwr-table { width: 100%; border-collapse: collapse; font-size: 11px; }
 .pwr-th { padding: 3px 8px; text-align: left; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-2); border-bottom: 1px solid var(--border); }
+.pwr-row { background: #fff; }
 .pwr-row:not(:last-child) td { border-bottom: 1px solid var(--border); }
 .pwr-var { padding: 5px 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
 .pwr-cell { padding: 5px 8px; font-size: 10px; }
@@ -920,6 +954,12 @@ tbody tr:nth-child(even):hover td { background: var(--bg); }
 
   <!-- Left panel: Builder -->
   <div class="left-panel" id="leftPanel">
+    <div class="tab-bar" style="padding:0 12px;flex-shrink:0;display:flex;align-items:center;gap:0">
+      <button class="tab active" id="ltab0" onclick="switchLeftTab(0)">Rambler</button>
+      <div id="userTabs"></div>
+      <button class="tab" id="tutTab" onclick="switchLeftTab('tut')" style="margin-left:4px">Tutorial</button>
+      <button class="tab" onclick="addNewTab()" title="New tab" style="padding:4px 8px;font-size:14px;line-height:1">+</button>
+    </div>
     <div class="left-scroll">
 
     <!-- Variables -->
@@ -1010,7 +1050,23 @@ let _varPickerTarget = null; // design id for current picker
 let _selectedTarget = null;  // design or composition id selected for analyze/run
 let _nextId = 1;
 const uid = () => `x${_nextId++}`;
-const labels = 'ABCDEFGHIJ';
+const designLabel = (idx) => `D${idx + 1}`;
+
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+function lcm(a, b) { return a / gcd(a, b) * b; }
+function designLCM(d) {
+  const counts = d.dvars.filter(dv => dv.annotation === 'counterbalance').map(dv => {
+    const v = state.variables.find(v => v.id === dv.vid);
+    if (!v) return 1;
+    if (v.type === 'multivar') return v.var_ids.reduce((p, vid) => { const rv = state.variables.find(x => x.id === vid); return p * (rv?.options?.length || 1); }, 1);
+    return (v.options || []).length || 1;
+  });
+  return counts.length ? counts.reduce((a, b) => lcm(a, b), 1) : null;
+}
+function autofillLimitPlans(d) {
+  const val = designLCM(d);
+  d.limit_plans = val;
+}
 
 function selectTarget(id) {
   _selectedTarget = id;
@@ -1025,37 +1081,138 @@ function render() {
   updateCompareBar();
 }
 
+// Returns state object for a given tab index (0 = Rambler, 1..N = user tabs)
+function getTabState(tabIdx) {
+  return tabIdx === 0 ? _states[0] : _userTabStates[tabIdx - 1];
+}
+
+// Builds a spec from any state object (not just the active one)
+function buildSpecFromState(s) {
+  return {
+    variables: s.variables.map(v => v.type === 'multivar'
+      ? {id: v.id, type: 'multivar', name: v.name, var_ids: v.var_ids}
+      : {id: v.id, type: 'var', name: v.name, options: v.options}
+    ),
+    designs: s.designs.map((d, i) => ({
+      id: d.id,
+      label: d.name || designLabel(i),
+      name: d.name || '',
+      variables: d.dvars.map(dv => ({
+        variable_id: dv.vid,
+        subject_type: dv.subject_type || 'within',
+        annotation: dv.annotation,
+        order_sequence: dv.annotation === 'order' ? (dv.order_sequence || []) : null,
+      })),
+      limit_plans: d.limit_plans || null,
+      num_trials: d.num_trials || null,
+    })),
+    compositions: s.compositions,
+    root: s.selectedTarget || (s.compositions.length ? s.compositions[s.compositions.length-1].id : s.designs[s.designs.length-1]?.id) || null,
+    units: s.units,
+  };
+}
+
+// Returns [{tabIdx, label, state}] for all non-tutorial tabs (saves current state first)
+function getAllComparableTabs() {
+  saveCurrentTabState();
+  const tabs = [{ tabIdx: 0, label: 'Rambler', state: _states[0] }];
+  _userTabStates.forEach((s, i) => {
+    tabs.push({ tabIdx: i + 1, label: s.label || `Tab ${i + 1}`, state: s });
+  });
+  return tabs;
+}
+
 function updateCompareBar() {
   const sel1 = document.getElementById('cmpSel1');
   const sel2 = document.getElementById('cmpSel2');
   const btn = document.getElementById('compareBtn');
   if (!sel1 || !sel2 || !btn) return;
 
-  const spec = buildSpec();
-  const tgts = buildAnalysisTargets(spec);
-
-  const prev1 = sel1.value, prev2 = sel2.value;
-  sel1.innerHTML = tgts.map(t => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
-  sel2.innerHTML = tgts.map(t => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
-
-  // Restore previous selections if still valid
-  if (tgts.find(t => t.id === prev1)) sel1.value = prev1;
-  if (tgts.find(t => t.id === prev2)) sel2.value = prev2;
-  // Default sel2 to second option so they differ
-  if (sel1.value === sel2.value && tgts.length >= 2) {
-    sel2.value = tgts.find(t => t.id !== sel1.value)?.id || tgts[0].id;
+  // Tutorial tab: use bare IDs from current state (autoCompare compatibility)
+  if (_activeTab === 'tut') {
+    const spec = buildSpec();
+    const tgts = buildAnalysisTargets(spec);
+    const prev1 = sel1.value, prev2 = sel2.value;
+    const html = tgts.map(t => `<option value="${esc(t.id)}">${esc(t.label)}</option>`).join('');
+    sel1.innerHTML = html;
+    sel2.innerHTML = html;
+    if (tgts.find(t => t.id === prev1)) sel1.value = prev1;
+    if (tgts.find(t => t.id === prev2)) sel2.value = prev2;
+    if (sel1.value === sel2.value && tgts.length >= 2)
+      sel2.value = tgts.find(t => t.id !== sel1.value)?.id || tgts[0].id;
+    const ok = tgts.length >= 2;
+    btn.disabled = !ok;
+    btn.style.opacity = ok ? '1' : '0.5';
+    return;
   }
 
-  const ok = tgts.length >= 2;
+  // Non-tutorial tabs: show options from all comparable tabs, value = "tabIdx:id"
+  const tabs = getAllComparableTabs();
+  const opts = [];
+  const multiTab = tabs.length > 1;
+  tabs.forEach(({ tabIdx, label, state }) => {
+    const spec = buildSpecFromState(state);
+    const tgts = buildAnalysisTargets(spec);
+    tgts.forEach(t => {
+      opts.push({
+        value: `${tabIdx}:${t.id}`,
+        label: multiTab ? `${label} / ${t.label}` : t.label,
+        tabIdx, id: t.id,
+      });
+    });
+  });
+
+  const prev1 = sel1.value, prev2 = sel2.value;
+  const html = opts.map(o => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('');
+  sel1.innerHTML = html;
+  sel2.innerHTML = html;
+  if (opts.find(o => o.value === prev1)) sel1.value = prev1;
+  if (opts.find(o => o.value === prev2)) sel2.value = prev2;
+  if (sel1.value === sel2.value && opts.length >= 2)
+    sel2.value = opts.find(o => o.value !== sel1.value)?.value || opts[0].value;
+
+  const ok = opts.length >= 2 && sel1.value !== sel2.value;
   btn.disabled = !ok;
   btn.style.opacity = ok ? '1' : '0.5';
 }
 
 function runCompare() {
-  const t1 = document.getElementById('cmpSel1')?.value;
-  const t2 = document.getElementById('cmpSel2')?.value;
-  if (!t1 || !t2) return;
-  compareDesigns(t1, t2, buildSpec());
+  const raw1 = document.getElementById('cmpSel1')?.value;
+  const raw2 = document.getElementById('cmpSel2')?.value;
+  if (!raw1 || !raw2) return;
+
+  // Tutorial tab: bare IDs, use current spec directly
+  if (_activeTab === 'tut') {
+    compareDesigns(raw1, raw2, buildSpec());
+    return;
+  }
+
+  // Non-tutorial: parse "tabIdx:id" format
+  const parse = raw => { const i = raw.indexOf(':'); return { tabIdx: parseInt(raw.slice(0, i)), id: raw.slice(i + 1) }; };
+  const p1 = parse(raw1), p2 = parse(raw2);
+  const s1 = getTabState(p1.tabIdx), s2 = getTabState(p2.tabIdx);
+  const spec1 = buildSpecFromState(s1), spec2 = buildSpecFromState(s2);
+
+  // Merge both specs (deduplicate by id)
+  const mergeById = (a, b) => { const seen = new Set(); return [...a, ...b].filter(x => seen.has(x.id) ? false : (seen.add(x.id), true)); };
+  const mergedSpec = {
+    variables:    mergeById(spec1.variables, spec2.variables),
+    designs:      mergeById(spec1.designs, spec2.designs),
+    compositions: mergeById(spec1.compositions, spec2.compositions),
+    units: spec1.units,
+    root: p1.id,
+  };
+
+  // Build display labels (tab-prefixed when cross-tab)
+  const tabs = getAllComparableTabs();
+  const multiTab = tabs.length > 1;
+  const labelOf = (tabIdx, id) => {
+    const tab = tabs.find(t => t.tabIdx === tabIdx);
+    const tgt = buildAnalysisTargets(buildSpecFromState(tab.state)).find(t => t.id === id);
+    return (multiTab ? tab.label + ' / ' : '') + (tgt?.label || id);
+  };
+
+  compareDesigns(p1.id, p2.id, mergedSpec, labelOf(p1.tabIdx, p1.id), labelOf(p2.tabIdx, p2.id));
 }
 
 function renderVars() {
@@ -1130,18 +1287,19 @@ function renderDesigns() {
     return;
   }
   el.innerHTML = state.designs.map((d, idx) => {
-    const label = labels[idx] || idx.toString();
+    const label = designLabel(idx);
     const isSelected = _selectedTarget === d.id;
     return `
     <div class="design-card${isSelected ? ' target-selected' : ''}" id="dc_${d.id}">
       <div class="design-card-header" style="cursor:pointer" onclick="selectTarget('${d.id}')">
         <span class="select-dot${isSelected ? ' active' : ''}"></span>
         <div class="design-label">${label}</div>
-        <input class="design-name-input" placeholder="Design ${label}"
+        <input class="design-name-input" placeholder="Name (optional)"
           value="${esc(d.name || '')}"
           onchange="updateDesignName('${d.id}', this.value)"
           oninput="updateDesignName('${d.id}', this.value)"
           onclick="event.stopPropagation()">
+        <button class="btn-icon" onclick="event.stopPropagation();copyDesign('${d.id}')" title="Copy" style="font-size:12px">⧉</button>
         <button class="btn-icon" onclick="event.stopPropagation();removeDesign('${d.id}')" title="Remove">×</button>
       </div>
       <div class="design-body">
@@ -1184,9 +1342,11 @@ function renderDesigns() {
         <div class="design-meta-row">
           <div class="meta-field">
             <span>limit_plans</span>
-            <input type="number" min="1" max="999" placeholder="—"
-              value="${d.limit_plans||''}"
-              onchange="updateDesignMeta('${d.id}','limit_plans',this.value||null)">
+            <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+              <input type="number" min="1" max="999" placeholder="—"
+                value="${d.limit_plans||''}"
+                onchange="updateDesignMeta('${d.id}','limit_plans',this.value||null)">
+            </div>
           </div>
           <div class="meta-field">
             <span>num_trials</span>
@@ -1264,8 +1424,7 @@ function renderCompositions() {
 function getNodeOptions() {
   const opts = [];
   state.designs.forEach((d, i) => {
-    const label = labels[i] || i.toString();
-    opts.push({id: d.id, label: `Design ${label}${d.name ? ' · ' + d.name : ''}`});
+    opts.push({id: d.id, label: d.name || designLabel(i)});
   });
   state.compositions.forEach((c, i) => {
     opts.push({id: c.id, label: `C${i+1} (${c.type})`});
@@ -1304,7 +1463,11 @@ function updateVarName(vid, val) {
 
 function removeOption(vid, idx) {
   const v = state.variables.find(v => v.id === vid);
-  if (v) { v.options.splice(idx, 1); render(); }
+  if (v) {
+    v.options.splice(idx, 1);
+    state.designs.forEach(d => { if (d.dvars.find(dv => dv.vid === vid)) autofillLimitPlans(d); });
+    render();
+  }
 }
 
 function addOptionKey(e, vid, input) {
@@ -1325,6 +1488,7 @@ function addOption(vid, val, input) {
   if (v && val && !v.options.includes(val)) {
     v.options.push(val);
     input.value = '';
+    state.designs.forEach(d => { if (d.dvars.find(dv => dv.vid === vid)) autofillLimitPlans(d); });
     render();
   }
 }
@@ -1355,16 +1519,39 @@ function addDesign() {
   render();
 }
 
-function removeDesign(did) {
-  if (_selectedTarget === did) _selectedTarget = null;
-  state.designs = state.designs.filter(d => d.id !== did);
-  state.compositions = state.compositions.filter(c =>
-    c.outer !== did && c.inner !== did && c.a !== did && c.b !== did
-  );
-  // Also clear selection if selected comp was removed
+function copyDesign(did) {
+  const src = state.designs.find(d => d.id === did);
+  if (!src) return;
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.id = uid();
+  copy.name = (copy.name || '') + ' copy';
+  const idx = state.designs.indexOf(src);
+  state.designs.splice(idx + 1, 0, copy);
+  render();
+}
+
+function cascadeRemoveComps() {
+  // Repeatedly remove compositions that reference any node no longer in state, until stable
+  let changed = true;
+  while (changed) {
+    changed = false;
+    const valid = new Set([...state.designs.map(d => d.id), ...state.compositions.map(c => c.id)]);
+    const before = state.compositions.length;
+    state.compositions = state.compositions.filter(c => {
+      const refs = [c.outer, c.inner, c.a, c.b].filter(Boolean);
+      return refs.every(r => valid.has(r));
+    });
+    if (state.compositions.length < before) changed = true;
+  }
   if (_selectedTarget && !state.compositions.find(c => c.id === _selectedTarget) && !state.designs.find(d => d.id === _selectedTarget)) {
     _selectedTarget = null;
   }
+}
+
+function removeDesign(did) {
+  if (_selectedTarget === did) _selectedTarget = null;
+  state.designs = state.designs.filter(d => d.id !== did);
+  cascadeRemoveComps();
   render();
 }
 
@@ -1403,6 +1590,7 @@ function setAnnotation(did, vid, annotation) {
       dv.order_sequence = [...opts];
     }
   }
+  autofillLimitPlans(d);
   render();
 }
 
@@ -1420,7 +1608,11 @@ function moveOrderItem(did, vid, idx, dir) {
 
 function removeDvar(did, vid) {
   const d = state.designs.find(d => d.id === did);
-  if (d) { d.dvars = d.dvars.filter(dv => dv.vid !== vid); render(); }
+  if (d) {
+    d.dvars = d.dvars.filter(dv => dv.vid !== vid);
+    autofillLimitPlans(d);
+    render();
+  }
 }
 
 // ── Variable picker ────────────────────────────────────────────────
@@ -1460,6 +1652,7 @@ function pickVar(vid) {
   if (d && !d.dvars.find(dv => dv.vid === vid)) {
     const v = state.variables.find(v => v.id === vid);
     d.dvars.push({vid, subject_type: 'within', annotation: 'randomized', order_sequence: [...(v?.options || [])]});
+    autofillLimitPlans(d);
   }
   closeVarPicker();
   render();
@@ -1481,6 +1674,7 @@ function addComposition() {
 function removeComp(cid) {
   if (_selectedTarget === cid) _selectedTarget = null;
   state.compositions = state.compositions.filter(c => c.id !== cid);
+  cascadeRemoveComps();
   render();
 }
 
@@ -1519,7 +1713,7 @@ function buildSpec() {
     ),
     designs: state.designs.map(d => ({
       id: d.id,
-      label: labels[state.designs.indexOf(d)] || d.id,
+      label: d.name || designLabel(state.designs.indexOf(d)),
       name: d.name || '',
       variables: d.dvars.map(dv => ({
         variable_id: dv.vid,
@@ -1537,10 +1731,20 @@ function buildSpec() {
 }
 
 // ── Run ────────────────────────────────────────────────────────────
+let _runController = null;
+
 async function runDesign() {
   const btn = document.getElementById('runBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
+
+  if (_runController) {
+    fetch('/api/cancel', {method: 'POST'}).catch(() => {});
+    _runController.abort();
+    return;
+  }
+
+  _runController = new AbortController();
+  btn.classList.add('btn-cancel');
+  btn.innerHTML = '<span class="spinner"></span> Cancel';
 
   const spec = buildSpec();
 
@@ -1549,6 +1753,7 @@ async function runDesign() {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(spec),
+      signal: _runController.signal,
     });
     const data = await res.json();
     renderResults(data, spec);
@@ -1556,10 +1761,18 @@ async function runDesign() {
       analyzeDesigns(_selectedTarget || null);
     }
   } catch(e) {
-    renderResults({success: false, error: e.message}, spec);
+    if (e.name === 'AbortError') {
+      renderResults({success: false, error: 'Run cancelled.'}, spec);
+    } else {
+      renderResults({success: false, error: e.message}, spec);
+    }
   } finally {
-    btn.disabled = false;
+    _runController = null;
+    btn.classList.remove('btn-cancel');
     btn.innerHTML = 'Run ▶';
+    if (_tutActive && _tutSteps[_tutIdx] && _tutSteps[_tutIdx].requiresRun) {
+      document.getElementById('tutNext').disabled = false;
+    }
   }
 }
 
@@ -1670,7 +1883,6 @@ function renderResults(data, spec) {
       </div>
       <div class="tab-bar">
         <button class="tab active" onclick="switchTab(event,'plans')">Plans</button>
-        <button class="tab" onclick="switchTab(event,'assignment')">Assignment</button>
         <button class="tab" onclick="switchTab(event,'code')">Code</button>
       </div>
       <div class="tab-panel active" id="tab-plans">${plansHTML}</div>
@@ -1724,15 +1936,12 @@ function download(content, filename, type) {
 
 // ── Analyze ────────────────────────────────────────────────────────
 function buildAnalysisTargets(spec) {
-  const labels = 'ABCDEFGHIJ';
   const targets = [];
   (spec.compositions || []).forEach((c, i) => {
     targets.push({ id: c.id, label: `C${i+1} (${c.type})` });
   });
   spec.designs.forEach((d, idx) => {
-    const letter = labels[idx] || String(idx + 1);
-    const name = d.name ? ` · ${d.name}` : '';
-    targets.push({ id: d.id, label: `Design ${letter}${name}` });
+    targets.push({ id: d.id, label: d.name || designLabel(idx) });
   });
   return targets;
 }
@@ -1786,30 +1995,56 @@ function renderAnalysis(data, spec, targets, activeTargetId) {
     singleBodyHTML = `<div class="results-body"><div class="error-box">${esc(data.error || 'Unknown error')}</div></div>`;
   } else {
     const a = data.analysis;
+    const randomVarSet = new Set(data.random_variables || []);
+    const effectHasRandomVar = v => v.split('-').some(part => randomVarSet.has(part.trim()));
+    const randTip = "Effect testability is subject to random variation and is more probable in large sample sizes";
     const tags = (items, cls) => items.length
-      ? items.map(v => `<span class="analysis-tag ${cls}">${esc(v)}</span>`).join('')
+      ? items.map(v => {
+          const randWarn = effectHasRandomVar(v)
+            ? `<span class="analysis-warn" data-tip="${randTip}">⚠</span>`
+            : '';
+          return `<span class="analysis-tag ${cls}">${esc(v)}${randWarn}</span>`;
+        }).join('')
       : `<span class="analysis-empty">none</span>`;
-    const warningsHTML = '';
+    // Per-variable: warn only if the time-varying effect of v cannot be estimated
+    const tvSet = new Set(a.time_varying_effects);
+    const tagWithTvWarn = (items, cls) => items.length
+      ? items.map(v => {
+          const tvWarn = !tvSet.has(v)
+            ? `<span class="analysis-warn" data-tip="Requires assumption: no time-varying effects">⚠</span>`
+            : '';
+          const randWarn = effectHasRandomVar(v)
+            ? `<span class="analysis-warn" data-tip="${randTip}">⚠</span>`
+            : '';
+          return `<span class="analysis-tag ${cls}">${esc(v)}${tvWarn}${randWarn}</span>`;
+        }).join('')
+      : `<span class="analysis-empty">none</span>`;
+    const warningBanners = (data.warnings || []).map(msg => {
+      // Strip the variable list (after "Variables that are completely randomized:") —
+      // those are surfaced via the per-effect ⚠ icons instead.
+      const descPart = msg.split('Variables that are completely randomized:')[0].trim();
+      return `<div class="analysis-warning-banner">⚠ ${esc(descPart)}</div>`;
+    }).join('');
     singleBodyHTML = `
       <div class="results-body">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+        ${warningBanners}
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;${warningBanners ? 'margin-top:8px' : ''}">
           <div>
-            <div class="analysis-section-title">Main Effects</div>
-            ${tags(a.main_effects, 'analysis-tag-main')}
+            <div class="analysis-section-title"><span data-def="main-effects" id="anal-main-title">Main Effects</span></div>
+            <div>${tagWithTvWarn([...a.main_effects].sort(), 'analysis-tag-main')}</div>
           </div>
           <div>
-            <div class="analysis-section-title">Interaction Effects</div>
-            ${tags(a.interaction_effects, 'analysis-tag-interaction')}
+            <div class="analysis-section-title"><span data-def="interaction-effects" id="anal-interaction-title">Interaction Effects</span></div>
+            <div>${tagWithTvWarn([...a.interaction_effects].sort(), 'analysis-tag-interaction')}</div>
           </div>
           <div>
-            <div class="analysis-section-title">Time-Varying Effects</div>
-            ${tags(a.time_varying_effects, 'analysis-tag-timevarying')}
+            <div class="analysis-section-title"><span data-def="time-varying" id="anal-timevarying-title">Time-Varying Effects</span></div>
+            <div>${tags([...a.time_varying_effects].sort(), 'analysis-tag-timevarying')}</div>
           </div>
           <div>
-            <div class="analysis-section-title">Within-Subjects Comparisons</div>
-            ${tags(a.ws_comparisons, 'analysis-tag-ws')}
+            <div class="analysis-section-title"><span data-def="ws-comparisons" id="anal-ws-title">Within-Subjects Comparisons</span></div>
+            <div>${tags([...a.ws_comparisons].sort(), 'analysis-tag-ws')}</div>
           </div>
-          ${warningsHTML}
         </div>
       </div>`;
   }
@@ -1830,7 +2065,7 @@ function renderAnalysis(data, spec, targets, activeTargetId) {
   }
 }
 
-async function compareDesigns(t1, t2, spec) {
+async function compareDesigns(t1, t2, spec, d1LabelOverride, d2LabelOverride) {
   const btn = document.getElementById('compareBtn');
   if (btn) { btn.disabled = true; btn.textContent = '…'; }
 
@@ -1846,8 +2081,8 @@ async function compareDesigns(t1, t2, spec) {
 
   const tgts = buildAnalysisTargets(spec);
   const labelOf = (id) => tgts.find(t => t.id === id)?.label || id;
-  const d1Label = labelOf(t1);
-  const d2Label = labelOf(t2);
+  const d1Label = d1LabelOverride || labelOf(t1);
+  const d2Label = d2LabelOverride || labelOf(t2);
 
   try {
     const [compareRes, run1Res, run2Res] = await Promise.all([
@@ -1880,6 +2115,9 @@ async function compareDesigns(t1, t2, spec) {
 }
 
 function renderCompareCard(card, data, run1Data, run2Data, d1Label, d2Label, condColorMap) {
+  if (_tutActive && _tutSteps[_tutIdx] && _tutSteps[_tutIdx].requiresCompare) {
+    document.getElementById('tutNext').disabled = false;
+  }
   const errorHTML = !data.success
     ? `<div class="error-box" style="margin:12px 16px">${esc(data.error || 'Analysis error')}</div>`
     : '';
@@ -1894,29 +2132,77 @@ function renderCompareCard(card, data, run1Data, run2Data, d1Label, d2Label, con
       </div>
     </div>`;
 
+  // ── Code ──────────────────────────────────────────────────────────
+  const mkCodePanel = (code, label) => `
+    <div style="min-width:0">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:6px">${esc(label)}</div>
+      <pre class="code-block" style="margin:0;font-size:10px">${syntaxHighlight(esc(code))}</pre>
+    </div>`;
+  const codeHTML = data.code_d1 && data.code_d2 ? `
+    <div class="results-body" style="border-top:1px solid var(--border)">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-2);margin-bottom:10px">Code</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        ${mkCodePanel(data.code_d1, d1Label)}
+        ${mkCodePanel(data.code_d2, d2Label)}
+      </div>
+    </div>` : '';
+
   // ── Analysis comparison ───────────────────────────────────────────
   let analysisHTML = '';
   if (data.success) {
     const a1 = data.analysis_d1;
     const a2 = data.analysis_d2;
     if (a1 && a2) {
+      const rv1 = new Set(a1.random_variables || []);
+      const rv2 = new Set(a2.random_variables || []);
+      const randTip = "Effect testability is subject to random variation and is more probable in large sample sizes";
+      const effectHasRand = (item, rvSet) => item.split('-').some(p => rvSet.has(p.trim()));
       const sections = [
-        { label:'Main Effect',  key:'main_effects' },
-        { label:'Interaction',  key:'interaction_effects' },
-        { label:'Time-Varying', key:'time_varying_effects' },
+        { label:'Main Effects',        key:'main_effects',        needsWarn: true,  checkIx: true,  defKey: 'main-effects'        },
+        { label:'Interaction Effects', key:'interaction_effects',  needsWarn: true,  checkIx: false, defKey: 'interaction-effects' },
+        { label:'Time-Varying Effects',key:'time_varying_effects', needsWarn: false, checkIx: false, defKey: 'time-varying'         },
       ];
+      // Per PLanet compare(): assumption warning on shared effects only when
+      // the *other* design can estimate the time-varying/interaction effect but this one cannot.
+      const tvSet1 = new Set(a1.time_varying_effects), tvSet2 = new Set(a2.time_varying_effects);
+      const tv1only = a1.time_varying_effects.filter(e => !tvSet2.has(e));
+      const tv2only = a2.time_varying_effects.filter(e => !tvSet1.has(e));
+      const ix1only = a1.interaction_effects.filter(e => !new Set(a2.interaction_effects).has(e));
+      const ix2only = a2.interaction_effects.filter(e => !new Set(a1.interaction_effects).has(e));
+      const warnForItem = (item, inThis, inOther, tvOtherOnly, ixOtherOnly, checkIx) => {
+        if (!inThis || !inOther) return ''; // only warn on shared effects
+        const parts = [];
+        if (tvOtherOnly.includes(item)) parts.push(`time-varying: ${tvOtherOnly.filter(e => e === item || e.includes(item)).join(', ') || item}`);
+        if (checkIx && ixOtherOnly.some(ie => ie.includes(item))) {
+          const affected = ixOtherOnly.filter(ie => ie.includes(item));
+          parts.push(`interaction: ${affected.join(', ')}`);
+        }
+        return parts.length ? `<span class="cmp-warn" data-tip="Requires assumption of no ${parts.join('; no ')}">⚠</span>` : '';
+      };
+      // Single combined warning banner listing which designs have random variables
+      const randomDesigns = [];
+      if ((a1.warnings || []).length) randomDesigns.push(esc(d1Label));
+      if ((a2.warnings || []).length) randomDesigns.push(esc(d2Label));
+      const warnBanners = randomDesigns.length
+        ? `<div class="analysis-warning-banner">⚠ ${randomDesigns.join(' and ')} contain${randomDesigns.length === 1 ? 's' : ''} random variables. Effect testability is subject to random variation and is more probable in large sample sizes.</div>`
+        : '';
       let rows = '';
-      for (const { label, key } of sections) {
+      for (const { label, key, needsWarn, checkIx, defKey } of sections) {
         const s1 = new Set(a1[key]), s2 = new Set(a2[key]);
         const all = [...new Set([...a1[key], ...a2[key]])].sort();
+        if (!all.length) continue;
+        rows += `<tr class="cmp-section-header"><td colspan="3"><span data-def="${defKey}">${label}</span></td></tr>`;
         for (const item of all) {
           const in1 = s1.has(item), in2 = s2.has(item);
           const both = in1 && in2;
-          const rowBg = in1 && !in2 ? 'background:#eff6ff' : !in1 && in2 ? 'background:#fff7ed' : '';
-          const c1 = in1 ? `<span class="cmp-check ${both?'cmp-in-both':'cmp-in-d1'}">✓</span>` : `<span class="cmp-check cmp-out">—</span>`;
-          const c2 = in2 ? `<span class="cmp-check ${both?'cmp-in-both':'cmp-in-d2'}">✓</span>` : `<span class="cmp-check cmp-out">—</span>`;
-          rows += `<tr style="${rowBg}">
-            <td class="cmp-type-cell"><span style="font-size:9px;color:var(--text-2);font-family:'JetBrains Mono',monospace">${label}</span></td>
+          const w1 = needsWarn ? warnForItem(item, in1, in2, tv2only, ix2only, checkIx) : '';
+          const w2 = needsWarn ? warnForItem(item, in2, in1, tv1only, ix1only, checkIx) : '';
+          const rw1 = in1 && effectHasRand(item, rv1) ? `<span class="cmp-warn" data-tip="${randTip}">⚠</span>` : '';
+          const rw2 = in2 && effectHasRand(item, rv2) ? `<span class="cmp-warn" data-tip="${randTip}">⚠</span>` : '';
+          const c1 = in1 ? `<span class="cmp-check ${both?'cmp-in-both':'cmp-in-d1'}">✓</span>${w1}${rw1}` : `<span class="cmp-check cmp-out">—</span>`;
+          const c2 = in2 ? `<span class="cmp-check ${both?'cmp-in-both':'cmp-in-d2'}">✓</span>${w2}${rw2}` : `<span class="cmp-check cmp-out">—</span>`;
+          const hasWarn = !!(w1 || w2 || rw1 || rw2);
+          rows += `<tr${hasWarn ? ' class="cmp-warn-row"' : ''}>
             <td class="cmp-var-cell">${esc(item)}</td>
             <td class="cmp-check-cell">${c1}</td>
             <td class="cmp-check-cell">${c2}</td>
@@ -1926,8 +2212,7 @@ function renderCompareCard(card, data, run1Data, run2Data, d1Label, d2Label, con
       const tableHTML = rows ? `
         <table class="cmp-table">
           <thead><tr>
-            <th class="cmp-th">Type</th>
-            <th class="cmp-th">Effect</th>
+            <th class="cmp-th">Effect Name</th>
             <th class="cmp-th" style="text-align:center;color:#1e40af">${esc(d1Label)}</th>
             <th class="cmp-th" style="text-align:center;color:#c2410c">${esc(d2Label)}</th>
           </tr></thead>
@@ -1936,6 +2221,7 @@ function renderCompareCard(card, data, run1Data, run2Data, d1Label, d2Label, con
 
       analysisHTML = `
         <div style="padding:12px 16px;display:flex;flex-direction:column;gap:14px">
+          ${warnBanners}
           ${tableHTML}
           ${powerVizHTML(a1, a2, d1Label, d2Label)}
         </div>`;
@@ -1949,7 +2235,8 @@ function renderCompareCard(card, data, run1Data, run2Data, d1Label, d2Label, con
     </div>
     ${errorHTML}
     ${analysisHTML}
-    ${plansHTML}`;
+    ${plansHTML}
+    ${codeHTML}`;
 }
 
 function miniPlansTable(runData, label, condColorMap) {
@@ -1992,21 +2279,24 @@ function powerVizHTML(a1, a2, d1Label, d2Label) {
     return `<span style="color:var(--text-2)">equal</span>`;
   };
 
-  const allEffects = [...new Set([
-    ...a1.main_effects, ...a2.main_effects,
-    ...a1.interaction_effects, ...a2.interaction_effects,
-  ])].sort();
+  // Only compare effects estimable in both designs
+  const set1 = new Set([...a1.main_effects, ...a1.interaction_effects, ...a1.ws_comparisons]);
+  const set2 = new Set([...a2.main_effects, ...a2.interaction_effects, ...a2.ws_comparisons]);
+  const allEffects = [...new Set([...set1].filter(v => set2.has(v)))].sort();
 
   if (!allEffects.length) return '';
 
   const rows = allEffects.map(v => {
     const l1 = level(v, a1), l2 = level(v, a2);
+    if (l1 === l2) return ''; // skip equal rows
     return `<tr class="pwr-row"><td class="pwr-var">${esc(v)}</td><td class="pwr-cell">${edgeHTML(l1, l2)}</td></tr>`;
-  }).join('');
+  }).filter(Boolean).join('');
+
+  if (!rows) return '';
 
   return `
     <div>
-      <div class="analysis-section-title" style="margin-bottom:6px">Power Advantage</div>
+      <div class="analysis-section-title" style="margin-bottom:6px"><span data-def="power-advantage" id="anal-power-title">Power Advantage</span></div>
       <table class="pwr-table">
         <thead><tr><th class="pwr-th">Effect</th><th class="pwr-th">Edge</th></tr></thead>
         <tbody>${rows}</tbody>
@@ -2045,7 +2335,588 @@ function loadExample() {
   render();
 }
 
-loadExample();
+// ── Multi-tab state ────────────────────────────────────────────────
+function makeTemplate1() {
+  const vid = uid(), did = uid();
+  return {
+    variables: [{ id: vid, type: 'var', name: 'Interface', options: ['Rambler', 'Baseline'] }],
+    designs: [{ id: did, name: 'Writing Study', dvars: [], limit_plans: null, num_trials: null }],
+    compositions: [],
+    units: 12,
+    selectedTarget: did,
+  };
+}
+function makeTemplate2() {
+  const v1 = uid(), v2 = uid(), v3 = uid(), d1 = uid();
+  return {
+    variables: [
+      { id: v1, type: 'var', name: 'Interface', options: ['FFL', 'LaTeX'] },
+      { id: v2, type: 'var', name: 'Task', options: ['Creation', 'Editing'] },
+      { id: v3, type: 'var', name: 'Number', options: ['1', '2'] },
+    ],
+    designs: [
+      { id: d1, name: 'Design 1', dvars: [], limit_plans: null, num_trials: null },
+    ],
+    compositions: [],
+    units: 12,
+    selectedTarget: d1,
+  };
+}
+
+function makeTemplate3() {
+  // Tutorial: mirrors the PLanet text-based tutorial notebook.
+  //
+  // Variables
+  //   interface [baseline, VR, AR]   — the interface variable from Step 1
+  //   task      [run, walk, sprint]  — the task variable from Step 4
+  //
+  // Designs
+  //   D1 "Between-subjects"   — interface, between-subjects (Step 2)
+  //   D2 "Within-subjects"    — interface, within + counterbalance (Step 3)
+  //   D3 "Latin Square"       — task, within + counterbalance + limit_plans(3) (Step 4)
+  //   D4 "Ordering"           — task, within + fixed order: run always first (Step 6)
+  //   D5 "Replication block"  — empty design, num_trials=2 (Step 6)
+  //   D6 "Multifactorial"     — interface×task multivar, within + counterbalance + limit_plans(9) (Step 7)
+  //
+  // Compositions
+  //   C1 = nest(inner=D2, outer=D3)  (Step 5 – nesting)
+  //   C2 = cross(D2, D3)             (Step 5 – crossing)
+  //   C3 = nest(inner=D5, outer=D3)  (Step 6 – replication)
+
+  const vInterface = uid(), vTask = uid(), vMulti = uid();
+  const d1 = uid(), d2 = uid(), d3 = uid(), d4 = uid(), d5 = uid(), d6 = uid();
+  const c1 = uid(), c2 = uid(), c3 = uid();
+
+  return {
+    variables: [
+      { id: vInterface, type: 'var',      name: 'interface',       options: ['baseline', 'VR', 'AR'] },
+      { id: vTask,      type: 'var',      name: 'task',            options: ['run', 'walk', 'sprint'] },
+      { id: vMulti,     type: 'multivar', name: 'interface × task', var_ids: [vInterface, vTask] },
+    ],
+    designs: [
+      { id: d1, name: 'Between-subjects',  dvars: [{ vid: vInterface, subject_type: 'between', annotation: 'randomized',    order_sequence: [] }],                           limit_plans: null, num_trials: null },
+      { id: d2, name: 'Within-subjects',   dvars: [{ vid: vInterface, subject_type: 'within',  annotation: 'counterbalance', order_sequence: ['baseline', 'VR', 'AR'] }],    limit_plans: null, num_trials: null },
+      { id: d3, name: 'Latin Square',      dvars: [{ vid: vTask,      subject_type: 'within',  annotation: 'counterbalance', order_sequence: ['run', 'walk', 'sprint'] }],   limit_plans: 3,    num_trials: null },
+      { id: d4, name: 'Ordering',          dvars: [{ vid: vTask,      subject_type: 'within',  annotation: 'order',          order_sequence: ['run', 'walk', 'sprint'] }],   limit_plans: null, num_trials: null },
+      { id: d5, name: 'Replication block', dvars: [],                                                                                                                         limit_plans: null, num_trials: 2    },
+      { id: d6, name: 'Multifactorial',    dvars: [{ vid: vMulti,     subject_type: 'within',  annotation: 'counterbalance', order_sequence: [] }],                          limit_plans: 9,    num_trials: null },
+    ],
+    compositions: [
+      { id: c1, type: 'nest',  outer: d3, inner: d2 },
+      { id: c2, type: 'cross', a: d2, b: d3 },
+      { id: c3, type: 'nest',  outer: d3, inner: d5 },
+    ],
+    units: 18,
+    selectedTarget: c1,
+  };
+}
+
+// _states[0] = Rambler (fixed), _states[1..] = user tabs, 'tut' = tutorial
+let _states = [makeTemplate1(), makeTemplate3()];
+let _userTabStates = []; // states for user-created tabs
+let _activeTab = 0; // 0 = Rambler, 1..N = user tabs (index into _userTabStates), 'tut' = tutorial
+
+function makeEmptyTab() {
+  return { variables: [], designs: [], compositions: [], units: 12, selectedTarget: null };
+}
+
+function renameUserTab(tabIdx) {
+  const s = _userTabStates[tabIdx - 1];
+  if (!s) return;
+  const name = prompt('Tab name:', s.label || `Tab ${tabIdx}`);
+  if (name !== null) { s.label = name.trim() || `Tab ${tabIdx}`; renderTabBar(); render(); }
+}
+
+function renderTabBar() {
+  const container = document.getElementById('userTabs');
+  container.innerHTML = _userTabStates.map((s, i) => {
+    const tabIdx = i + 1;
+    const isActive = _activeTab === tabIdx;
+    const label = s.label || `Tab ${tabIdx}`;
+    return `<button class="tab${isActive ? ' active' : ''}" onclick="switchLeftTab(${tabIdx})" ondblclick="event.stopPropagation();renameUserTab(${tabIdx})" title="Double-click to rename" style="display:inline-flex;align-items:center;gap:4px">
+      <span>${esc(label)}</span>
+      <span onclick="event.stopPropagation();removeUserTab(${tabIdx})" style="font-size:12px;line-height:1;opacity:.6;cursor:pointer" title="Close">×</span>
+    </button>`;
+  }).join('');
+  document.getElementById('ltab0').classList.toggle('active', _activeTab === 0);
+  document.getElementById('tutTab').classList.toggle('active', _activeTab === 'tut');
+}
+
+function addNewTab() {
+  const name = prompt('Tab name:');
+  if (name === null) return; // cancelled
+  const newState = makeEmptyTab();
+  newState.label = name.trim() || `Tab ${_userTabStates.length + 1}`;
+  _userTabStates.push(newState);
+  const tabIdx = _userTabStates.length;
+  renderTabBar();
+  switchLeftTab(tabIdx);
+}
+
+function removeUserTab(tabIdx) {
+  const arrIdx = tabIdx - 1;
+  _userTabStates.splice(arrIdx, 1);
+  if (_activeTab === tabIdx) {
+    switchLeftTab(0);
+  } else {
+    if (_activeTab > tabIdx) _activeTab--;
+    renderTabBar();
+  }
+}
+
+function saveCurrentTabState() {
+  const units = parseInt(document.getElementById('unitsInput').value) || 12;
+  if (_activeTab === 0) {
+    _states[0].units = units;
+    _states[0].selectedTarget = _selectedTarget;
+  } else if (_activeTab === 'tut') {
+    _states[1].units = units;
+    _states[1].selectedTarget = _selectedTarget;
+  } else {
+    const s = _userTabStates[_activeTab - 1];
+    if (s) { s.units = units; s.selectedTarget = _selectedTarget; }
+  }
+}
+
+function loadTab(idx) {
+  let s;
+  if (idx === 0) s = _states[0];
+  else if (idx === 'tut') s = _states[1];
+  else s = _userTabStates[idx - 1];
+  if (!s) return;
+  state.variables    = s.variables;
+  state.designs      = s.designs;
+  state.compositions = s.compositions;
+  state.units        = s.units;
+  _selectedTarget    = s.selectedTarget;
+  document.getElementById('unitsInput').value = s.units;
+}
+
+function switchLeftTab(idx) {
+  saveCurrentTabState();
+  if (_tutActive) endTutorial();
+  _activeTab = idx;
+  loadTab(idx);
+  renderTabBar();
+  render();
+  if (idx === 'tut') setTimeout(startTutorial, 300);
+}
+
+loadTab(0);
+renderTabBar();
+render();
+
+// ── Script push polling ────────────────────────────────────────────
+let _pollVer = 0;
+
+async function doPoll() {
+  try {
+    const res = await fetch('/api/poll');
+    const { version, data } = await res.json();
+    if (version > _pollVer) {
+      _pollVer = version;
+      if (data) renderPushedResults(data);
+    }
+  } catch(_) {}
+}
+setInterval(doPoll, 1000);
+
+// ── Tutorial ────────────────────────────────────────────────────────
+const _tutSteps = [
+  { sel: null,
+    title: 'Welcome to PLanet!',
+    text: 'This tutorial walks you through PLanet\'s core concepts. Click Next to begin.' },
+
+  // ── Variables ──────────────────────────────────────────────────────
+  { sel: '#varList',
+    title: 'Step 1: Experiment Variables',
+    text: '<b>ExperimentVariables</b> are the independent or controlled variables in the study. Each has a name and a list of conditions.' },
+  { sel: '#varList .var-card:nth-child(1)',
+    title: 'interface [baseline, VR, AR]',
+    text: '<b>interface</b> has three conditions: baseline, VR, and AR.' },
+  { sel: '#varList .var-card:nth-child(2)',
+    title: 'task [run, walk, sprint]',
+    text: '<b>task</b> has three conditions: run, walk, and sprint.' },
+  { sel: '#varList .var-card:nth-child(3)',
+    title: 'Multifact Variable',
+    text: 'A <b>multifact</b> variable (marked MV) combines all conditions of two or more variables.For example, <b>interface × task</b> produces 9 combined conditions, one for every interface/task pair.' },
+
+  // ── Designs ────────────────────────────────────────────────────────
+  { sel: '#designList',
+    title: 'Step 2: Designs',
+    text: 'A <b>Design</b> specifies how variable(s) get assigned to participants.' },
+  { sel: '#designList .design-card:nth-child(1)',
+    title: 'Between-subjects',
+    text: 'In this design, each participant receives exactly one condition, randomly assigned. The <b>BS</b> button is active here. Rand is set by default.' },
+  { sel: '#runBtn', autoSelect: { type: 'design', idx: 0 }, requiresRun: true,
+    title: 'View the between-subjects design',
+    text: '<b>Click Run ▶</b>. Notice that each participant receives exactly one interface condition.' },
+  { sel: '#designList .design-card:nth-child(2)',
+    title: 'Within-subjects',
+    text: 'Each participant receives more than one different condition of the variable. <b>Counterbalancing</b> (cb) ensures every condition appears in every position an equal number of times across participants.' },
+  { sel: '#runBtn', autoSelect: { type: 'design', idx: 1 }, requiresRun: true,
+    title: 'View the within-subjects design',
+    text: '<b>Click Run ▶</b>. Each participant now sees all three interface conditions. You can change how many conditions each participant sees by setting the number of trials.' },
+  { sel: '#designList .design-card:nth-child(3)',
+    title: 'Latin Square',
+    text: 'A <b>Latin square</b> is a counterbalanced design, where each condition appears exactly once in each position. <b>limit_plans = 3</b> constrains the design to exactly 3 plans.' },
+  { sel: '#runBtn', autoSelect: { type: 'design', idx: 2 }, requiresRun: true,
+    title: 'View the Latin square',
+    text: '<b>Click Run ▶</b>. There are exactly 3 plans and each task condition appears once in every position.' },
+  { sel: '#designList .design-card:nth-child(4)',
+    title: 'Ordering Conditions',
+    text: 'The <b>order</b> annotation fixes the order of conditions for every participant. Here, task is always assigned run → walk → sprint. The order must contain each condition of the corresponding variable exactly once.' },
+  { sel: '#runBtn', autoSelect: { type: 'design', idx: 3 }, requiresRun: true,
+    title: 'View the ordering design',
+    text: '<b>Click Run ▶</b>. Every participant receives the task conditions in the same fixed order.' },
+  { sel: '#designList .design-card:nth-child(5)',
+    title: 'Replication',
+    text: 'You may want participants to complete a condition or order of conditions more than once. In PLanet, you can replicate trials by using the nest operation with an empty design. An empty design contains no variables, but you can specify the number of trials. The number of trials indicate how many times a condition will repear. Nesting applies the replication. Swapping the order of designs modifies the replication strategy.' },
+  { sel: '#designList .design-card:nth-child(6)',
+    title: 'Multifactorial Design',
+    text: 'This design assigns the <b>interface × task</b> multifact variable within-subjects with all 9 conditions.' },
+  { sel: '#runBtn', autoSelect: { type: 'design', idx: 5 }, requiresRun: true,
+    title: 'View the multifactorial design',
+    text: '<b>Click Run ▶</b>. Each participant receives all 9 interface × task combinations in a counterbalanced order.' },
+
+  // ── Composing Designs ──────────────────────────────────────────────
+  { sel: '#compList',
+    title: 'Step 3: Composing Designs',
+    text: '<b>nest</b> and <b>cross</b> are different stretegies for combining two designs into a single assignment procedure.' },
+  { sel: '#compList .comp-row:nth-child(1)',
+    title: 'nest',
+    text: '<b>nest</b> places the inner design\'s plans inside each trial of the outer design. Here, interface orders are nested inside each task block. In this scenario, nest enforces that a partipant experiences every interface consecutively with the same task before switching to a new task.' },
+  { sel: '#runBtn', autoSelect: { type: 'comp', idx: 0 }, requiresRun: true,
+    title: 'View the nested design',
+    text: '<b>Click Run ▶</b>. Observe how the interface conditions repeat within each task trial.' },
+  { sel: '#compList .comp-row:nth-child(2)',
+    title: 'cross',
+    text: '<b>cross</b> overlays every plan from one design with every plan of the other, pairing each interface order with each task order. cross requires that each design has the same number of trials.' },
+  { sel: '#runBtn', autoSelect: { type: 'comp', idx: 1 }, requiresRun: true,
+    title: 'View the crossed design',
+    text: '<b>Click Run ▶</b>. Each participant\'s plan interleaves interface and task conditions together.' },
+  { sel: '#compList .comp-row:nth-child(3)',
+    title: 'nest with Replication',
+    text: '<b>C3</b> nests the replication block inside the Latin square. Each task condition is assigned twice in a row before moving to the next.' },
+  { sel: '#runBtn', autoSelect: { type: 'comp', idx: 2 }, requiresRun: true,
+    title: 'View the replicated design',
+    text: '<b>Click Run ▶</b>. Each task condition is repeated twice consecutively within each participant\'s plan.' },
+
+  // ── Analysis ───────────────────────────────────────────────────────
+  { sel: '#analysisCard',
+    title: 'Step 4: Analysis',
+    text: 'PLanet automatically analyzes what effects your design can estimate. Try hovering over any of the effect types (e.g., main effect) to see its definition and an example.' },
+  { sel: '#anal-main-title',
+    title: 'Main Effects',
+    text: 'A <b>main effect</b> influence of a single variable on the outcome. Hover over the title to see the full definition.' },
+  { sel: '#anal-interaction-title',
+    title: 'Interaction Effects',
+    text: 'An <b>interaction effect</b> occurs when the effect of one variable depends on the level of another. Hover over the title to see the full definition.' },
+  { sel: '#anal-timevarying-title',
+    title: 'Time-Based Effects',
+    text: '<b>Time-based effects</b> occur when the participant performs differently due to changes over time in the experiment. For example, participants becoming fatigued in later trials is an example of a time-based effect. Hover over the title to see the full definition.' },
+  { sel: '#anal-ws-title',
+    title: 'Within-Subjects Comparisons',
+    text: '<b>Within-subjects comparisons</b> occur when participants experience all conditions of a variable. Hover over the title to see the full definition.' },
+  { sel: '.run-bar', autoCompare: { t1: { type: 'comp', idx: 0 }, t2: { type: 'design', idx: 2 } }, requiresCompare: true,
+    title: 'Compare: Nest vs Latin Square',
+    text: 'Click <b>Compare</b> to view the differences between the two designs.' },
+  { sel: '.run-bar', autoCompare: { t1: { type: 'design', idx: 0 }, t2: { type: 'design', idx: 1 } }, requiresCompare: true,
+    title: 'Compare: Between vs Within',
+    text: 'Compare <b>D1 (Between-subjects)</b> vs <b>D2 (Within-subjects)</b>. Click <b>Compare</b> and observe the <b>Power Advantage</b> section.' },
+  { sel: null,
+    title: 'Power Advantage',
+    text: 'The <b>Power Advantage</b> section shows which design has stronger statistical power for a given effect. Stronger statistical power indicates that you will require fewer participants to test the same design.' },
+];
+
+let _tutIdx = 0;
+let _tutActive = false;
+
+function startTutorial() {
+  _tutActive = true;
+  _tutIdx = 0;
+  _showTutStep();
+}
+
+function endTutorial() {
+  _tutActive = false;
+  document.getElementById('tutTip').style.display = 'none';
+  document.getElementById('tutHighlight').style.display = 'none';
+}
+
+function tutStep(dir) {
+  _tutIdx += dir;
+  if (_tutIdx >= _tutSteps.length) { endTutorial(); return; }
+  if (_tutIdx < 0) _tutIdx = 0;
+  _showTutStep();
+}
+
+function _showTutStep() {
+  const step = _tutSteps[_tutIdx];
+  const tip  = document.getElementById('tutTip');
+  const hl   = document.getElementById('tutHighlight');
+
+  // Auto-select the appropriate design or composition for Run
+  if (step.autoSelect) {
+    const { type, idx } = step.autoSelect;
+    const item = type === 'design' ? state.designs[idx] : state.compositions[idx];
+    if (item) { _selectedTarget = item.id; render(); }
+  }
+
+  // Auto-set the Compare dropdowns
+  if (step.autoCompare) {
+    const resolveId = ({ type, idx }) => type === 'design' ? state.designs[idx]?.id : state.compositions[idx]?.id;
+    const id1 = resolveId(step.autoCompare.t1);
+    const id2 = resolveId(step.autoCompare.t2);
+    requestAnimationFrame(() => {
+      const sel1 = document.getElementById('cmpSel1');
+      const sel2 = document.getElementById('cmpSel2');
+      const btn  = document.getElementById('compareBtn');
+      if (sel1 && id1) sel1.value = id1;
+      if (sel2 && id2) sel2.value = id2;
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    });
+  }
+
+  document.getElementById('tutTitle').textContent = step.title;
+  document.getElementById('tutText').innerHTML    = step.text;
+  document.getElementById('tutProg').textContent  = `${_tutIdx + 1} / ${_tutSteps.length}`;
+  document.getElementById('tutNext').textContent  = _tutIdx === _tutSteps.length - 1 ? 'Done ✓' : 'Next →';
+  document.getElementById('tutNext').disabled     = !!(step.requiresRun || step.requiresCompare);
+  document.getElementById('tutPrev').disabled     = _tutIdx === 0;
+
+  // Highlight target
+  if (step.sel) {
+    const el = document.querySelector(step.sel);
+    if (el) {
+      // Scroll instantly so the element's bounding rect is stable before measuring
+      el.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+      const r = el.getBoundingClientRect();
+      const pad = 5;
+      hl.style.left    = (r.left   - pad) + 'px';
+      hl.style.top     = (r.top    - pad) + 'px';
+      hl.style.width   = (r.width  + pad * 2) + 'px';
+      hl.style.height  = (r.height + pad * 2) + 'px';
+      hl.style.display = 'block';
+
+      // Position tip to the right of the highlighted element, flipping if needed
+      const tipW = 320, tipH = 220, margin = 14;
+      let tx = r.right + margin;
+      let ty = r.top + r.height / 2 - tipH / 2;
+      if (tx + tipW > window.innerWidth - 10) tx = r.left - tipW - margin;
+      ty = Math.max(10, Math.min(ty, window.innerHeight - tipH - 10));
+      tip.style.transform = '';
+      tip.style.left = tx + 'px';
+      tip.style.top  = ty + 'px';
+    } else {
+      hl.style.display = 'none';
+      _centerTip(tip);
+    }
+  } else {
+    hl.style.display = 'none';
+    _centerTip(tip);
+  }
+  tip.style.display = 'block';
+}
+
+function _centerTip(tip) {
+  tip.style.transform = 'translate(-50%, -50%)';
+  tip.style.left = '50%';
+  tip.style.top  = '50%';
+}
+
+function _condColorMapFromPlans(plans) {
+  const map = {};
+  let idx = 0;
+  for (const plan of (plans || [])) {
+    for (const trial of (plan.trials || [])) {
+      for (const part of trial.split('-')) {
+        if (!(part in map)) { map[part] = CB_PALETTE[idx % CB_PALETTE.length]; idx++; }
+      }
+    }
+  }
+  return map;
+}
+
+function renderPushedResults(pushed) {
+  const area = document.getElementById('resultsArea');
+
+  if (pushed.type === 'assignment') {
+    const plans      = pushed.plans || [];
+    const numTrials  = plans[0]?.trials.length || 0;
+    const colorMap   = _condColorMapFromPlans(plans);
+    const assignRows = pushed.assignment || [];
+
+    const plansHTML = `
+      <div class="plans-table-wrap">
+        <table>
+          <thead><tr>${Array.from({length: numTrials}, (_,i) => `<th>T${i+1}</th>`).join('')}</tr></thead>
+          <tbody>${plans.map(p => `<tr>${p.trials.map(t => {
+            const parts = t.split('-');
+            const cell  = parts.map(part => {
+              const col = colorMap[part] || {bg:'#f1f5f9', text:'#475569'};
+              return `<span class="condition-cell" style="background:${col.bg};color:${col.text}">${esc(part)}</span>`;
+            }).join('<span style="color:var(--text-2);font-size:9px;padding:0 1px">-</span>');
+            return `<td class="cond-td">${cell}</td>`;
+          }).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+
+    const assignHTML = assignRows.length ? `
+      <div class="plans-table-wrap">
+        <table>
+          <thead><tr>${Object.keys(assignRows[0]).map(k => `<th>${esc(k)}</th>`).join('')}</tr></thead>
+          <tbody>${assignRows.map(row => `<tr>${Object.values(row).map(v => `<td>${v}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>` : '<div style="font-size:12px;color:var(--text-2)">No assignment data</div>';
+
+    area.innerHTML = `
+      <div class="results-card">
+        <div class="results-header">
+          <span class="results-title">Results</span>
+          <span style="font-size:11px;color:var(--text-2)">${plans.length} plan${plans.length!==1?'s':''} · ${numTrials} trial${numTrials!==1?'s':''} each</span>
+          <div class="results-sep"></div>
+          <span style="font-size:10px;color:var(--accent);font-weight:500">▲ from script</span>
+        </div>
+        <div class="tab-bar">
+          <button class="tab active" onclick="switchTab(event,'plans')">Plans</button>
+        </div>
+        <div class="tab-panel active" id="tab-plans">${plansHTML}</div>
+        <div class="tab-panel" id="tab-assignment">${assignHTML}</div>
+      </div>`;
+
+  } else if (pushed.type === 'compare') {
+    const run1ColorMap = _condColorMapFromPlans(pushed.run1?.plans);
+    const run2ColorMap = _condColorMapFromPlans(pushed.run2?.plans);
+    const colorMap = { ...run1ColorMap, ...run2ColorMap };
+
+    area.innerHTML = '';
+    const card = document.createElement('div');
+    card.className = 'results-card';
+    area.appendChild(card);
+
+    const compareData = {
+      success: true,
+      analysis_d1: pushed.analysis_d1,
+      analysis_d2: pushed.analysis_d2,
+    };
+    renderCompareCard(
+      card, compareData,
+      pushed.run1, pushed.run2,
+      pushed.label1, pushed.label2,
+      colorMap,
+    );
+
+    // Append "from script" badge to header
+    const hdr = card.querySelector('.results-header');
+    if (hdr) {
+      const badge = document.createElement('span');
+      badge.style.cssText = 'font-size:10px;color:var(--accent);font-weight:500';
+      badge.textContent = '▲ from script';
+      hdr.appendChild(badge);
+    }
+  }
+}
+</script>
+<div id="floatTip"></div>
+<div id="defTip">
+  <div class="def-title" id="defTitle"></div>
+  <div id="defBody"></div>
+  <div class="def-ex" id="defEx"></div>
+</div>
+<div id="tutHighlight"></div>
+<div id="tutTip">
+  <div class="tut-title" id="tutTitle"></div>
+  <div id="tutText"></div>
+  <div class="tut-nav">
+    <button class="tut-btn tut-skip" onclick="endTutorial()">Skip</button>
+    <span class="tut-prog" id="tutProg"></span>
+    <button class="tut-btn tut-prev" id="tutPrev" onclick="tutStep(-1)">← Prev</button>
+    <button class="tut-btn tut-next" id="tutNext" onclick="tutStep(1)">Next →</button>
+  </div>
+</div>
+<script>
+(function() {
+  const tip = document.getElementById('floatTip');
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest('[data-tip]');
+    if (!el) return;
+    tip.textContent = el.dataset.tip;
+    tip.style.display = 'block';
+  });
+  document.addEventListener('mouseout', e => {
+    if (!e.target.closest('[data-tip]')) return;
+    tip.style.display = 'none';
+  });
+  document.addEventListener('mousemove', e => {
+    if (tip.style.display === 'none') return;
+    const pad = 10, tw = tip.offsetWidth, th = tip.offsetHeight;
+    let x = e.clientX + pad;
+    let y = e.clientY + pad;
+    if (x + tw > window.innerWidth - pad) x = e.clientX - tw - pad;
+    if (y + th > window.innerHeight - pad) y = e.clientY - th - pad;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  });
+})();
+</script>
+<script>
+(function() {
+  const _defs = {
+    'main-effects': {
+      title: 'Main Effects',
+      body: 'The independent influence of a single variable on the outcome, averaged across all levels of other variables.',
+      ex: 'If interface affects task time regardless of task type, that is a main effect of interface.'
+    },
+    'interaction-effects': {
+      title: 'Interaction Effects',
+      body: 'When the effect of one variable on the outcome depends on the level of another variable.',
+      ex: 'If VR only outperforms baseline on the "run" task but not others, that is an interface × task interaction.'
+    },
+    'time-varying': {
+      title: 'Time-Varying Effects',
+      body: 'Effects that change across trials due to learning, fatigue, or practice over the course of the experiment.',
+      ex: 'If participants get faster on every condition as the session progresses, task time has a time-varying effect.'
+    },
+    'ws-comparisons': {
+      title: 'Within-Subjects Comparisons',
+      body: 'Direct comparisons between conditions seen by the same participant, enabling higher statistical power by controlling individual differences.',
+      ex: 'When each participant sees both VR and baseline, you compare them within the same person.'
+    },
+    'power-advantage': {
+      title: 'Power Advantage',
+      body: 'The statistical power benefit one design has over another for estimating a specific effect. Within-subjects designs tend to have higher power because individual differences are controlled.',
+      ex: 'D2 (within-subjects) has a power advantage over D1 (between-subjects) for the interface main effect.'
+    }
+  };
+
+  const defTip = document.getElementById('defTip');
+
+  document.addEventListener('mouseover', e => {
+    const el = e.target;
+    if (!el.dataset || !el.dataset.def) return;
+    const d = _defs[el.dataset.def];
+    if (!d) return;
+    document.getElementById('defTitle').textContent = d.title;
+    document.getElementById('defBody').textContent  = d.body;
+    document.getElementById('defEx').textContent    = 'e.g. ' + d.ex;
+    defTip.style.display = 'block';
+    // Position below the element, flipping up if needed
+    const r = el.getBoundingClientRect();
+    const tw = 300, th = 150, margin = 8;
+    let x = r.left;
+    let y = r.bottom + margin;
+    if (x + tw > window.innerWidth - 10) x = window.innerWidth - tw - 10;
+    if (y + th > window.innerHeight - 10) y = r.top - th - margin;
+    defTip.style.left = x + 'px';
+    defTip.style.top  = y + 'px';
+  });
+
+  document.addEventListener('mouseout', e => {
+    if (!e.target.dataset || !e.target.dataset.def) return;
+    defTip.style.display = 'none';
+  });
+})();
 </script>
 </body>
 </html>
