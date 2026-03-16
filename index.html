@@ -2626,7 +2626,7 @@ const _tutSteps = [
     text: 'Compare <b>D1 (Between-subjects)</b> vs <b>D2 (Within-subjects)</b>. Click <b>Compare</b> and observe the <b>Power Advantage</b> section.' },
   { sel: null,
     title: 'Power Advantage',
-    text: 'The <b>Power Advantage</b> section shows which design has stronger statistical power for a given effect. Stronger statistical power indicates that you will require fewer participants to test the same design.' },
+    text: 'The <b>Power Advantage</b> section shows which design has stronger statistical power for a given effect. A more efficient design achieves higher power with fewer participants.' },
 ];
 
 let _tutIdx = 0;
@@ -2865,18 +2865,18 @@ function renderPushedResults(pushed) {
   const _defs = {
     'main-effects': {
       title: 'Main Effects',
-      body: 'The independent influence of a single variable on the outcome, averaged across all levels of other variables.',
-      ex: 'If interface affects task time regardless of task type, that is a main effect of interface.'
+      body: 'The independent influence of a single variable on the outcome, averaged across all levels of any other variables.',
+      ex: 'The influence of interface on task time regardless of task type is the main effect of the interface.'
     },
     'interaction-effects': {
       title: 'Interaction Effects',
-      body: 'When the effect of one variable on the outcome depends on the level of another variable.',
+      body: 'The influence of a variable that depends on the level (i.e., condition) of another variable. When interaction effects exist, main effects alone can be misleading and should be interpretted with caution.',
       ex: 'If VR only outperforms baseline on the "run" task but not others, that is an interface × task interaction.'
     },
-    'time-varying': {
-      title: 'Time-Varying Effects',
-      body: 'Effects that change across trials due to learning, fatigue, or practice over the course of the experiment.',
-      ex: 'If participants get faster on every condition as the session progresses, task time has a time-varying effect.'
+    'time-based': {
+      title: 'Time-Based Effects',
+      body: 'The influence of time or state over the course of an experiment. PLanet indicates which effects can be interpreted without bias from time-based effects.',
+      ex: 'Learning effects are one example of time-based effects where participants perform better in later trials, simply because they learned more about the task over the course of the study.'
     },
     'ws-comparisons': {
       title: 'Within-Subjects Comparisons',
@@ -2885,8 +2885,8 @@ function renderPushedResults(pushed) {
     },
     'power-advantage': {
       title: 'Power Advantage',
-      body: 'The statistical power benefit one design has over another for estimating a specific effect. Within-subjects designs tend to have higher power because individual differences are controlled.',
-      ex: 'D2 (within-subjects) has a power advantage over D1 (between-subjects) for the interface main effect.'
+      body: 'The statistical power advantage of one design over another for estimating a specific effect. More efficient designs have higher statistical power with the same number of participants. Two designs can have power advantages for some effects and not for others.',
+      ex: 'The Within subjects design has a power advantage over the Between subjects design for the interface main effect.'
     }
   };
 
