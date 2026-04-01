@@ -12,8 +12,8 @@ from pathlib import Path
 
 os.chdir(Path(__file__).parent)
 
-# Reuse code-generation and helper from app.py
-from app import generate_code, py_id
+# Reuse code-generation and helpers from app.py
+from app import generate_code, py_id, _run_analysis, _collect_nodes, _filter_spec
 
 
 class Api:
@@ -67,9 +67,9 @@ class Api:
 
     def analyze(self, spec):
         try:
-            from planet.analysis import Analysis
-
-            code = generate_code(spec)
+            target = spec.get("analyze_target", "root")
+            filtered = _filter_spec({**spec, "root": target})
+            code = generate_code(filtered)
             ns = {}
             old_stdout = sys.stdout
             sys.stdout = io.StringIO()
@@ -78,12 +78,11 @@ class Api:
             finally:
                 sys.stdout = old_stdout
 
-            target = spec.get("analyze_target", "root")
             if target == "root":
                 design_obj = ns.get("_final")
-            elif any(d["id"] == target for d in spec.get("designs", [])):
+            elif any(d["id"] == target for d in filtered.get("designs", [])):
                 design_obj = ns.get(f"des_{py_id(target)}")
-            elif any(c["id"] == target for c in spec.get("compositions", [])):
+            elif any(c["id"] == target for c in filtered.get("compositions", [])):
                 design_obj = ns.get(f"comp_{py_id(target)}")
             else:
                 design_obj = ns.get("_final")
@@ -91,11 +90,7 @@ class Api:
             if design_obj is None:
                 return {"success": False, "error": "Target design not found"}
 
-            sys.stdout = io.StringIO()
-            try:
-                analysis = Analysis(design_obj)
-            finally:
-                sys.stdout = old_stdout
+            analysis, warn_messages, random_variables = _run_analysis(design_obj)
 
             return {
                 "success": True,
@@ -105,15 +100,27 @@ class Api:
                     "time_varying_effects": [str(v) for v in analysis.time_varying_effects],
                     "ws_comparisons": [str(v) for v in analysis.ws_comparisons],
                 },
+                "warnings": warn_messages,
+                "random_variables": random_variables,
             }
         except Exception as e:
             return {"success": False, "error": str(e), "traceback": traceback.format_exc()}
 
     def compare(self, spec):
         try:
-            from planet.analysis import Analysis
-
-            code = generate_code(spec)
+            t1 = spec.get("compare_target_1")
+            t2 = spec.get("compare_target_2")
+            d_ids, c_ids, v_ids = set(), set(), set()
+            for t in (t1, t2):
+                di, ci, vi = _collect_nodes(t, spec)
+                d_ids |= di; c_ids |= ci; v_ids |= vi
+            combined = {
+                **spec,
+                "variables":    [v for v in spec.get("variables", [])    if v["id"] in v_ids],
+                "designs":      [d for d in spec.get("designs", [])      if d["id"] in d_ids],
+                "compositions": [c for c in spec.get("compositions", []) if c["id"] in c_ids],
+            }
+            code = generate_code(combined)
             ns = {}
             old_stdout = sys.stdout
             sys.stdout = io.StringIO()
@@ -125,36 +132,47 @@ class Api:
             def resolve(target_id):
                 if target_id == "root":
                     return ns.get("_final")
-                if any(d["id"] == target_id for d in spec.get("designs", [])):
+                if any(d["id"] == target_id for d in combined.get("designs", [])):
                     return ns.get(f"des_{py_id(target_id)}")
-                if any(c["id"] == target_id for c in spec.get("compositions", [])):
+                if any(c["id"] == target_id for c in combined.get("compositions", [])):
                     return ns.get(f"comp_{py_id(target_id)}")
                 return ns.get("_final")
 
-            d1 = resolve(spec.get("compare_target_1"))
-            d2 = resolve(spec.get("compare_target_2"))
-            if d1 is None or d2 is None:
+            d1_obj = resolve(t1)
+            d2_obj = resolve(t2)
+            if d1_obj is None or d2_obj is None:
                 return {"success": False, "error": "One or both target designs not found"}
 
-            sys.stdout = io.StringIO()
-            try:
-                a1 = Analysis(d1)
-                a2 = Analysis(d2)
-            finally:
-                sys.stdout = old_stdout
+            a1, w1, rv1 = _run_analysis(d1_obj)
+            a2, w2, rv2 = _run_analysis(d2_obj)
 
-            def analysis_dict(a):
+            def code_for_target(target_id):
+                di, ci, vi = _collect_nodes(target_id, spec)
+                sub = {
+                    **spec,
+                    "variables":    [v for v in spec.get("variables", [])    if v["id"] in vi],
+                    "designs":      [d for d in spec.get("designs", [])      if d["id"] in di],
+                    "compositions": [c for c in spec.get("compositions", []) if c["id"] in ci],
+                    "root": target_id,
+                }
+                return generate_code(sub)
+
+            def analysis_dict(a, warn_messages, random_vars):
                 return {
                     "main_effects": [str(v) for v in sorted(a.main_effects, key=str)],
                     "interaction_effects": [str(v) for v in sorted(a.interaction_effects, key=str)],
                     "time_varying_effects": [str(v) for v in sorted(a.time_varying_effects, key=str)],
                     "ws_comparisons": [str(v) for v in sorted(a.ws_comparisons, key=str)],
+                    "warnings": warn_messages,
+                    "random_variables": random_vars,
                 }
 
             return {
                 "success": True,
-                "analysis_d1": analysis_dict(a1),
-                "analysis_d2": analysis_dict(a2),
+                "analysis_d1": analysis_dict(a1, w1, rv1),
+                "analysis_d2": analysis_dict(a2, w2, rv2),
+                "code_d1": code_for_target(t1),
+                "code_d2": code_for_target(t2),
             }
         except Exception as e:
             return {"success": False, "error": str(e), "traceback": traceback.format_exc()}

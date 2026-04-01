@@ -1,11 +1,11 @@
-# PLanet Composer
+# PLanet 
+The PLanet web interface for specifying and analyzing assignment procedures in
+the design of experiments using the [PLanet
+DSL](https://pypi.org/project/planet-dsl/). PLanet lets you
+interactively build experimental designs, inspect their statistical properties,
+and compare tradeoffs between designs. The PLanet DSL serves as the basis for
+the graphical interface. View PLanet DSL's source code and more information at https://anonymous.4open.science/r/PLanet-BFD0.
 
-A web-based interface for composing and analyzing within-subjects, between-subjects, and mixed HCI experiments using the [PLanet DSL](https://pypi.org/project/planet-dsl/). PLanet Composer lets you interactively build experimental designs, inspect their statistical properties, compare tradeoffs between designs, and generate counterbalancing plans and participant assignments — without writing any code.
-
-![Interface overview](docs/images/overview.png)
-*The PLanet Composer interface. Left panel: Variables → Designs → Composition → Run. Right panel: Analysis and Results.*
-
----
 
 ## Table of Contents
 
@@ -28,15 +28,33 @@ A web-based interface for composing and analyzing within-subjects, between-subje
 
 **Requirements:** Python 3.9+
 
+### 1. Clone the repository
+
 ```bash
 git clone <repo-url>
 cd experiment-interface
+```
+
+### 2. Start the server
+
+```bash
 ./run.sh
 ```
 
-Then open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
+On first run, `run.sh` automatically:
+1. Creates a `.venv` virtual environment
+2. Installs all dependencies (`planet-dsl`, `fastapi`, `uvicorn`, `pandas`)
+3. Starts the server at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
-On first run, `run.sh` automatically creates a `.venv` virtual environment and installs all dependencies (`planet-dsl`, `fastapi`, `uvicorn`, `pandas`). Subsequent runs skip this step and start the server immediately.
+Subsequent runs skip setup and start the server immediately.
+
+### 3. Open the interface
+
+Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
+
+To stop the server, press `Ctrl+C` in the terminal.
+
+> **Note:** If `./run.sh` is not executable, run `chmod +x run.sh` first.
 
 ---
 
@@ -44,14 +62,12 @@ On first run, `run.sh` automatically creates a `.venv` virtual environment and i
 
 The interface has two panels:
 
-- **Left panel** — Build your experiment top-to-bottom: define variables, create designs, and compose them. The **Participants** count, **Analyze**, **Compare**, and **Run ▶** buttons sit at the bottom.
+- **Left panel** — Build your experiment top-to-bottom: define variables, create designs, and compose them. The **Units** count, **Analyze**, **Compare**, and **Run ▶** buttons sit at the bottom.
 - **Right panel** — View results: analysis, plans, participant assignments, and generated code.
-
-Work flows left-to-right and top-to-bottom: variables → designs → composition → run.
 
 ---
 
-## Step 1 — Variables
+## Variables
 
 Variables are the independent variables in your experiment. Each has a **name** and a list of **conditions** (levels).
 
@@ -65,7 +81,7 @@ Click **+ multifact** to create a variable that jointly represents the combinati
 
 ---
 
-## Step 2 — Designs
+## Designs
 
 A design specifies *how* variables are assigned to participants. Click **+ design**, then **+ add variable** inside the design card to assign variables to it.
 
@@ -73,8 +89,8 @@ A design specifies *how* variables are assigned to participants. Click **+ desig
 
 Each variable in a design is toggled as:
 
-- **W (Within)** — every participant sees every condition
-- **B (Between)** — each participant sees only one condition
+- **WS (Within-subjects)**: every participant two or more conditions
+- **BS (Between-subjects)**: each participant sees only one condition
 
 ### Annotations
 
@@ -82,15 +98,17 @@ For within-subjects variables, select how conditions are ordered:
 
 | Annotation | Meaning |
 |---|---|
-| **Randomized** | Conditions randomly ordered per participant (no counterbalancing) |
-| **Counterbalance** | Conditions systematically counterbalanced using Latin square-style plans |
-| **Fixed order** | All participants see conditions in a fixed sequence you specify by dragging |
+| **Randomized** | Conditions are randomly assigned without counterbalancing |
+| **Counterbalance** | Conditions are counterbalanced, ensuring each condition appears an equal number of times in each position  |
+| **Fixed order** | All participants see conditions in a fixed sequence |
 
 ### limit_plans
 
-`limit_plans` caps the number of counterbalancing plans generated. By default, PLanet generates the full set required for complete counterbalancing. Restricting this — for example, to the number of conditions of one variable — approximates a Latin square.
+`limit_plans` caps the number of counterbalancing plans generated. By default,
+PLanet generates the full set required for complete counterbalancing.
+Restricting this to the number of conditions of one variable reslts in a Latin
+square.
 
-Each variable in the design has a **pill button** showing its condition count. Click it to set `limit_plans` to that value automatically.
 
 ### num_trials
 
@@ -98,28 +116,29 @@ Each variable in the design has a **pill button** showing its condition count. C
 
 ---
 
-## Step 3 — Composition
+## Composition
 
 Compositions combine two designs into a single experiment structure. Click **+ composition** and select a type:
 
 | Type | Meaning |
 |---|---|
-| **Nest** | The inner design repeats within each block of the outer design. The outer variable is a between-block factor. |
-| **Cross** | Both designs are run fully for every participant — all combinations of the two designs are realized. |
+| **Nest** | Conditions in each row of the inner design repeat within each block of the outer design. |
+| **Cross** | Both designs are superimposed.  |
 
-The **outer** and **inner** dropdowns accept any defined design or prior composition, so arbitrarily complex structures can be built up as a tree.
+Nesting and crossing returns a design object, so they can be arbitrarily
+composed to create complex designs.
 
-> **Tip:** The last composition in the list is used as the root of the experiment unless you click a specific design or composition card to select it as the target.
 
----
-
-## Running a Design
+## Run
 
 Set the **Participants** count at the bottom of the left panel, then click **Run ▶**.
 
-PLanet generates all counterbalancing plans and assigns participants to them. For large designs (many conditions or a large plan space), this can take time. The button turns red and shows **Cancel** while running — click it again to abort immediately. The backend process is killed on cancel, so no computation continues in the background.
-
-If the design requires more plans than participants (e.g., 8 plans but only 6 participants), an error is shown with the minimum participant count needed.
+PLanet generates plans and assigns participants to them.
+For large designs (many conditions or a large plan space), this can take time.
+The button turns red and shows **Cancel** while running. Click the button to
+cancel the run. If the design requires more plans than participants (e.g., 8
+plans but only 6 participants), an error is shown with the minimum participant
+count needed.
 
 ---
 
@@ -127,7 +146,7 @@ If the design requires more plans than participants (e.g., 8 plans but only 6 pa
 
 After a successful run, the right panel shows three tabs:
 
-**Plans** — Each counterbalancing plan is a row; trials are columns. Conditions are color-coded consistently throughout the interface.
+**Plans** — Each counterbalancing plan is a row and trials are columns. Conditions are color-coded consistently throughout the interface.
 
 **Assignment** — Shows each participant's ID and which plan they are assigned to.
 
@@ -143,61 +162,45 @@ The analysis card shows four categories:
 
 | Category | Meaning |
 |---|---|
-| **Main Effects** | Variables whose main effect is estimable |
-| **Interaction Effects** | Variable combinations whose interaction is estimable |
-| **Time-Varying Effects** | Effects whose carryover component is separately estimable |
-| **Within-Subjects Comparisons** | Variables for which every participant sees every condition |
+| **Main Effects** | Variables whose main effect is testable |
+| **Interaction Effects** | Variable combinations whose interaction effect is testable |
+| **Time-based Effects** | Variables whose time-based effect is estimable |
+| **Within-Subjects Comparisons** | Variables for which every participant sees every testable |
 
 ### Assumption warnings
 
 A **⚠** icon appears on a main or interaction effect when estimating it requires an assumption. Hover over the icon to read the assumption.
 
-This occurs when a confounding effect (time-varying or interaction) exists but cannot be estimated separately — for example, when too few counterbalancing plans are used to disentangle carryover from the main effect. A design that *can* estimate the time-varying effect does not require this assumption and will not show the warning.
+This occurs when a confounding effect (time-varying or interaction) may exist
+but the design cannot account for them. 
 
 ---
 
 ## Comparing Designs
 
-When two or more designs are defined, a **Compare** button appears. Select two designs from the dropdowns and click **Compare**.
+When two or more designs are defined, a **Compare** button appears. Select two
+designs from the dropdowns and click **Compare**.
 
-The comparison view shows a table of all estimable effects grouped into three sections — **Main Effects**, **Interaction Effects**, and **Time-Varying Effects** — with a column for each design. Each row shows whether the effect is estimable (✓) or not (—) in each design.
+The comparison view shows a table of all testable effects grouped into **Main
+Effects**, **Interaction Effects**, and **Time-Varying Effects**. Each row shows whether the effect is
+estimable (✓) or not (—) in each design.
 
-- **Blue rows** — effects estimable only in Design 1
-- **Orange rows** — effects estimable only in Design 2
-- **⚠ on a ✓** — the effect is estimable in this design, but only under an assumption that the other design does not require (e.g., the other design can estimate the time-varying effect of that variable, but this one cannot)
-
-Below the table, a **Power Advantage** summary indicates which design has stronger statistical power for each effect, ranked as: within-subjects comparison > estimable > not estimable.
-
----
-
-## Exporting
-
-After running a design, two export buttons appear:
-
-- **CSV** — Downloads a merged table of participant assignments and trial sequences. Each row is a participant; columns include their plan, trial order, and condition per variable.
-- **LaTeX** — Downloads a formatted LaTeX table of the counterbalancing plans, suitable for inclusion in a paper.
-
----
+Below the table, a **Power Advantage** summary indicates which design is more
+efficient (e.g., requires fewer participants) to test each effect.
 
 ## Advanced: Repeat Blocks
-
 To have participants complete **multiple repetitions** of a design, use an empty design nested around your main design:
 
 1. Create a new design with **no variables** assigned
 2. Set its `num_trials` to the desired number of repetitions
 3. Create a **Nest** composition with the empty design as **outer** and your real design as **inner**
 
-Because the outer design has no variables, it contributes no conditions of its own — it acts purely as a repetition counter, causing the inner design to repeat for each of its trials.
-
-> **Example:** An empty design with `num_trials = 3` nested around a counterbalanced `interface` design produces 3 full repetitions of the interface conditions per participant, with counterbalancing applied within each repetition.
-
-This is the compositional idiom for repetition in PLanet. There is no separate "repeat" primitive — repetition emerges naturally from nesting an empty design.
-
 ---
 
 ## Local GUI (no browser)
 
-PLanet Composer also runs as a standalone desktop application using [pywebview](https://pywebview.flowrl.com/), with no browser or server required:
+PLanet Composer also runs as a standalone desktop application using
+[pywebview](https://pywebview.flowrl.com/), with no browser or server required:
 
 ```bash
 python gui.py
@@ -244,6 +247,4 @@ run.sh           # Web app start script (sets up venv on first run)
 run_gui.sh       # Local GUI start script
 requirements.txt
 docs/
-  images/
-    overview.png # Single annotated screenshot of the full interface
 ```
