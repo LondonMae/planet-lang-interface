@@ -208,34 +208,6 @@ python gui.py
 
 The local GUI is functionally identical to the web app.
 
-### Launching from a Python script
-
-Pre-populate the GUI with results computed in a Python script using `show_results()` from `gui.py`:
-
-```python
-from gui import show_results
-from planet import *
-
-interface = ExperimentVariable("interface", options=["baseline", "VR"])
-design = Design().within_subjects(interface).counterbalance(interface)
-assignment = assign(Units(8), design)
-
-plans = assignment.computed_plans
-plan_data = [{"plan_id": i+1, "trials": [str(c) for c in plan]}
-             for i, plan in enumerate(plans)]
-
-show_results({
-    "plans": plan_data,
-    "variables": [v.name for v in design.variables],
-    "assignment": assignment.format_assignment().to_dict(orient="records"),
-    "code": "# your generated code here",
-})
-```
-
-This opens a window with the results pre-loaded, bypassing the interactive design step entirely.
-
----
-
 ## Project Structure
 
 ```
