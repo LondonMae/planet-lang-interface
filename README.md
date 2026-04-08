@@ -4,7 +4,10 @@ the design of experiments using the [PLanet
 DSL](https://pypi.org/project/planet-dsl/). PLanet lets you
 interactively build experimental designs, inspect their statistical properties,
 and compare tradeoffs between designs. The PLanet DSL serves as the basis for
-the graphical interface. View PLanet DSL's source code and more information at https://anonymous.4open.science/r/PLanet-BFD0.
+the graphical interface. View PLanet DSL's source code and more information at
+https://anonymous.4open.science/r/PLanet-BFD0.
+
+Play with the interface at https://planet-dsl.github.io/experiment-interface/.
 
 
 ## Table of Contents
