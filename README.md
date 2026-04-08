@@ -7,7 +7,7 @@ and compare tradeoffs between designs. The PLanet DSL serves as the basis for
 the graphical interface. View PLanet DSL's source code and more information at
 https://anonymous.4open.science/r/PLanet-BFD0.
 
-Play with the interface at https://planet-dsl.github.io/experiment-interface/.
+Play with the interface at https://experiment-interface-589760482620.us-central1.run.app.
 
 
 ## Table of Contents
